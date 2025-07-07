@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kato Salsa Hub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+</head>
+<body>
+
+<header>
+  <img src="497920904_663091236535066_7391348201798305950_n.jpg" alt="Kato Salsa Hub Logo" class="logo">
+  <h1>Kato Salsa Hub</h1>
+  <nav>
+    <a href="#onas">O nas</a>
+    <a href="#style">Style</a>
+    <a href="#mapa">Gdzie tańczymy</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
+</header>
+
+<div class="hero" data-aos="fade-up">
+  <video autoplay muted loop>
+    <source src="twoj-film.mp4" type="video/mp4">
+    Twoja przeglądarka nie obsługuje odtwarzacza wideo.
+  </video>
+  <div class="hero-content">
+    <h2>Kubańska energia w sercu Śląska</h2>
+<a href="https://www.facebook.com/KatoSalsaHub/" target="_blank">
+    <button>Dołącz do wydarzeń</button></a>
+  </div>
+</div>
+
+<section id="onas" data-aos="fade-right">
+  <h2>O nas</h2>
+  <p>Tworzymy społeczność taneczną łączącą ludzi przez rytm, taniec i kubańską kulturę. Spotykamy się regularnie na otwartych wydarzeniach w Katowicach i okolicach.</p>
+</section>
+
+<section id="style" data-aos="fade-left">
+  <h2>Style tańca</h2>
+  <div class="styles">
+    <div><strong>Salsa Cubana</strong><br> Żywiołowy taniec pełen figur i improwizacji.</div>
+    <div><strong>Rueda de Casino</strong><br> Taniec w kole z wywoływanymi figurami.</div>
+    <div><strong>Bachata</strong><br> Zmysłowy styl wywodzący się z Dominikany.</div>
+    <div><strong>Timba</strong><br> Kubańska odmiana salsy z dużą ekspresją.</div>
+  </div>
+</section>
+
+<section id="mapa" data-aos="fade-up">
+  <h2>Gdzie tańczymy?</h2>
+  <p>Najczęściej spotykamy się na Dolinie Trzech Stawów</p>
+  <iframe
+  src="https://www.google.com/maps/d/u/0/embed?mid=1tyLFngBLY9SKSARa2q-RzJ9ghmI-rSg&ehbc=2E312F"
+  width="100%"
+  height="450"
+  style="border:0;"
+  allowfullscreen=""
+  loading="lazy"
+  referrerpolicy="no-referrer-when-downgrade">
+</iframe>
+
+</section>
+
+<section id="kontakt" data-aos="fade-up">
+  <h2>Kontakt</h2>
+  <form name="contact" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="contact">
+    <input type="text" name="name" placeholder="Imię i nazwisko" required>
+    <input type="email" name="email" placeholder="Adres e-mail" required>
+    <textarea name="message" rows="5" placeholder="Wiadomość" required></textarea>
+    <button class="submit" type="submit">Wyślij wiadomość</button>
+  </form>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>AOS.init();</script>
+</body>
+</html>
