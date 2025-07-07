@@ -1,0 +1,18 @@
+# Edytor
+.vscode/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logi
+*.log
+
+# Kompilacje
+dist/
+out/
+build/
+
+# Inne
+node_modules/
+.env
