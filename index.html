@@ -56,16 +56,23 @@
 
     <section id="kontakt" data-aos="fade-up">
       <h2>Kontakt</h2>
-      <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="thank-you.html">
-        <input type="hidden" name="form-name" value="contact">
-        <p hidden>
-          <label>Nie wypełniaj tego pola: <input name="bot-field"></label>
-        </p>
-        <input type="text" name="name" placeholder="Imię i nazwisko" required>
-        <input type="email" name="email" placeholder="Adres e-mail" required>
-        <textarea name="message" rows="5" placeholder="Wiadomość" required></textarea>
-        <button class="submit" type="submit">Wyślij wiadomość</button>
-      </form>
+<form name="contact" netlify data-netlify="true" netlify-honeypot="bot-field" action="/thank-you/">
+  <input type="hidden" name="form-name" value="contact" />
+
+  <p>
+    <label>Imię i nazwisko: <input type="text" name="name" required /></label>
+  </p>
+  <p>
+    <label>Adres e-mail: <input type="email" name="email" required /></label>
+  </p>
+  <p>
+    <label>Wiadomość: <textarea name="message" required></textarea></label>
+  </p>
+  <p>
+    <button type="submit">Wyślij wiadomość</button>
+  </p>
+</form>
+
     </section>
   </main>
 
