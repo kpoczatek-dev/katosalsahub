@@ -111,6 +111,8 @@ body {
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	text-decoration: none; /* Ensure no underline */
+	color: var(--text-white); /* Fallback color */
 }
 
 .logo-text {
@@ -659,13 +661,26 @@ body {
 	border-radius: 30px;
 	overflow: hidden;
 	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+	position: relative;
+}
+
+.map-container::after {
+	/* Optional overlay gradient for consistent feel */
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+	z-index: 1;
 }
 
 .map-container iframe {
 	width: 100%;
 	height: 500px;
 	border: none;
+	/* Dark mode effect */
+	filter: grayscale(20%) invert(90%) hue-rotate(180deg) contrast(90%);
 }
 
 /* Kontakt Section */
