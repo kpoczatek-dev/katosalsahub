@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;800&display=swap"
     rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
 </head>
 
 <body>
@@ -255,6 +256,7 @@
         <a href="#onas">O nas</a>
         <a href="#style">Style</a>
         <a href="#kontakt">Kontakt</a>
+        <a href="privacy.html">Polityka Prywatności</a>
         <a href="https://dancepuls.katosalsahub.pl/" target="_blank">DancePuls Generator</a>
       </div>
     </div>
@@ -264,7 +266,20 @@
     </div>
   </footer>
 
+  <!-- Cookie Banner -->
+  <div id="cookie-banner" class="cookie-banner">
+    <div class="cookie-content">
+      <h4>🍪 Ciasteczka i Prywatność</h4>
+      <p>Używamy ciasteczek, aby zapewnić najlepszą jakość korzystania z naszej strony. Sprawdź naszą <a
+          href="privacy.html">Politykę Prywatności</a>.</p>
+    </div>
+    <div class="cookie-actions">
+      <button id="accept-cookies" class="btn btn-primary">Akceptuję</button>
+    </div>
+  </div>
+
   <script src="assets/js/contact.js"></script>
+  <script src="assets/js/cookies.js"></script>
   <script>
     // Rok w footerze
     document.getElementById("rok").textContent = new Date().getFullYear();
