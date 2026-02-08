@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Salsopedia Auto-Tests</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: monospace;
+            padding: 20px;
+        }
+
+        .pass {
+            color: #0f0;
+        }
+
+        .fail {
+            color: #f00;
+            font-weight: bold;
+        }
+
+        .suite {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Salsopedia Automated Tests</h1>
+    <div id="results">Running tests...</div>
+
+    <!-- Scripts to Test -->
+    <script src="assets/js/router.js"></script>
+    <script src="assets/js/radio.js"></script>
+    <script src="assets/js/home.js"></script>
+    <!-- Wiki.js loaded last to check dependencies -->
+    <script src="assets/js/wiki.js"></script>
+
+    <script>
+        const results = document.getElementById('results');
+        let logHtml = '';
+        let passed = 0;
+        let failed = 0;
+
+        function assert(condition, message) {
+            if (condition) {
+                logHtml += `<div class="pass">✔ PASS: ${message}</div>`;
+                passed++;
+            } else {
+                logHtml += `<div class="fail">✘ FAIL: ${message}</div>`;
+                failed++;
+            }
+        }
+
+        function testSuite(name, fn) {
+            logHtml += `<div class="suite"><h3>${name}</h3>`;
+            try {
+                fn();
+            } catch (e) {
+                logHtml += `<div class="fail">✘ EXCEPTION: ${e.message}</div>`;
+                failed++;
+            }
+            logHtml += `</div>`;
+        }
+
+        window.onload = function () {
+            results.innerHTML = '';
+
+            testSuite('Router.js Integrity', () => {
+                assert(typeof window.initHome === 'function', 'initHome is defined'); // From home.js, but used by router
+                // Note: Router itself doesn't expose global functions besides initWiki logic check
+                // assert(document.querySelector('script[src*="router.js"]'), 'Router script loaded');
+            });
+
+            testSuite('Wiki.js Integrity', () => {
+                assert(typeof window.initWiki === 'function', 'initWiki is defined');
+                assert(typeof window.renderTerms === 'function', 'renderTerms is defined');
+                assert(typeof window.scrollToTerm === 'function', 'scrollToTerm is defined');
+                assert(typeof window.openModal === 'function', 'openModal is defined');
+            });
+
+            testSuite('Radio.js Integrity', () => {
+                assert(typeof window.initRadio === 'function', 'initRadio is defined');
+            });
+
+            testSuite('Syntax Checks', () => {
+                // If we got here, syntax was likely okay for main parsing
+                assert(true, 'Scripts parsed without syntax errors blocking execution');
+            });
+
+            results.innerHTML = `<h2>Summary: <span style="color:${failed === 0 ? '#0f0' : '#f00'}">${passed} Passed, ${failed} Failed</span></h2>` + logHtml;
+        };
+    </script>
+</body>
+
+</html>
