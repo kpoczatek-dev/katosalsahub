@@ -74,7 +74,7 @@ if ($action === 'approve') {
         // If it's new, we add it.
 
         $finalEntry = [
-            'id' => $entry['original_id'] ?? uniqid('term_'),
+            'id' => !empty($entry['original_id']) ? $entry['original_id'] : uniqid('term_'),
             'term' => $entry['term'],
             'definition' => $entry['definition'],
             'author' => $entry['author'],

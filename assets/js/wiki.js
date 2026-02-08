@@ -379,9 +379,22 @@ function renderTerms(terms, isPendingMode = false) {
             statusHtml = `<span class="status-unverified"><i class="fas fa-exclamation-triangle"></i> Niezweryfikowane (${verCount})</span>`;
         }
 
+        // Action Buttons
         let actionBtn = '';
         if (isPendingMode) {
-            actionBtn = `<div class="pending-info"><small>Oczekuje na moderację...</small></div>`;
+            // Moderation Buttons
+            // Note: We use the token for approval/rejection
+            const token = term.token; 
+            actionBtn = `
+                <div class="pending-actions" style="margin-top:10px; display:flex; gap:10px;">
+                    <button class="btn-verify" onclick="approveTerm('${token}')" style="background:rgba(16, 185, 129, 0.2); border-color:#10b981; color:#10b981;">
+                        <i class="fas fa-check"></i> Zatwierdź
+                    </button>
+                    <button class="btn-verify" onclick="rejectTerm('${token}')" style="background:rgba(255, 71, 87, 0.2); border-color:#ff4757; color:#ff4757;">
+                        <i class="fas fa-times"></i> Odrzuć
+                    </button>
+                </div>
+            `;
         } else {
             const btnText = term.status === 'unverified' ? 'Zweryfikuj' : 'Edytuj';
             const btnIcon = term.status === 'unverified' ? 'fa-check-double' : 'fa-pen';
