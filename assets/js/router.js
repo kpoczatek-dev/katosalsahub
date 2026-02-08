@@ -161,13 +161,14 @@ async function loadPage(url) {
 
 function loadScript(src) {
     return new Promise((resolve, reject) => {
-        // Check if already exists to avoid duplicates
-        if (document.querySelector(`script[src="${src}"]`)) {
+        // Check if already exists (ignore query params for check)
+        // We check if any script starts with the src path
+        if (document.querySelector(`script[src^="${src}"]`)) {
             resolve();
             return;
         }
         const script = document.createElement('script');
-        script.src = src;
+        script.src = src + '?v=' + Date.now(); // Cache Buster
         script.onload = resolve;
         script.onerror = reject;
         document.body.appendChild(script);
