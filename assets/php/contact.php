@@ -1,87 +1,75 @@
 <?php
-header("Content-Type: application/json; charset=UTF-8");
+// Ustawienie nagłówka na JSON
+header('Content-Type: application/json; charset=utf-8');
 
-// Sprawdź metodę żądania
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(405);
-    echo json_encode(["status" => "error", "message" => "Metoda nie dozwolona."]);
-    exit;
+// Logowanie błędów do pliku
+ini_set('log_errors', 1);
+ini_set('error_log', 'email_debug.log');
+
+// Funkcja logująca
+function debug_log($message) {
+    file_put_contents('email_debug.log', date('Y-m-d H:i:s') . " " . $message . "\n", FILE_APPEND);
 }
 
-// Pobierz dane wejściowe (obsługa JSON)
+// Obsługa wejścia (JSON lub POST)
 $input = json_decode(file_get_contents("php://input"), true);
-
-// Jeśli nie JSON, spróbuj klasycznego POST (dla pewności)
-if (!$input) {
+if (!is_array($input)) {
     $input = $_POST;
 }
 
-// ==========================================
-// SPRAWDZENIE HONEYPOT (PLASTER MIODU)
-// ==========================================
+// Logowanie surowego wejścia dla pewności
+debug_log("RAW INPUT: " . file_get_contents("php://input"));
+if (empty($input)) {
+    debug_log("Input empty after parsing.");
+    echo json_encode(['success' => false, 'message' => 'Brak danych wejściowych']);
+    exit;
+}
+
+// Honeypot (hp_chk)
 if (!empty($input['hp_chk'])) {
-    // Jeśli pole 'hp_chk' jest wypełnione, to znaczy, że to bot.
-    // Udajemy sukces, żeby bot nie próbował ponownie, ale nic nie wysyłamy.
-    http_response_code(200);
-    echo json_encode(["status" => "success", "message" => "Dziękujemy! Wiadomość została wysłana."]);
+    debug_log("Honeypot triggered. Value: " . $input['hp_chk']);
+    // Symulujemy sukces dla bota
+    echo json_encode(['success' => true, 'message' => 'Wiadomość wysłana!']);
     exit;
 }
 
-// Pobierz i oczyść dane rzeczywiste
-$name = isset($input['name']) ? trim($input['name']) : '';
-$email = isset($input['email']) ? trim($input['email']) : '';
-$message = isset($input['message']) ? trim($input['message']) : '';
+// Walidacja pól
+$name = trim($input['name'] ?? '');
+$email = trim($input['email'] ?? '');
+$message = trim($input['message'] ?? '');
 
-// Walidacja - czy pola są wypełnione?
 if (empty($name) || empty($email) || empty($message)) {
-    http_response_code(400);
-    echo json_encode(["status" => "error", "message" => "Wszystkie pola są wymagane."]);
+    debug_log("Validation failed. Name: $name, Email: $email, Msg length: " . strlen($message));
+    echo json_encode(['success' => false, 'message' => 'Wypełnij wszystkie pola!']);
     exit;
 }
 
-// Walidacja emaila
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    echo json_encode(["status" => "error", "message" => "Podano niepoprawny adres email."]);
-    exit;
-}
+// Konfiguracja Email
+$to = "krzysztof.poczatek@gmail.com"; // Twój email
+$subject = "Nowa wiadomość od: $name";
+$email_content = "Imię: $name\nEmail: $email\n\nWiadomość:\n$message";
 
-// Adres docelowy
-$to = "poczatek.krzysztof@gmail.com";
-$subject = "Nowa wiadomość z Kato Salsa Hub od: $name";
-
-// Treść wiadomości
-$email_content = "Imię i nazwisko: $name\n";
-$email_content .= "Email: $email\n\n";
-$email_content .= "Wiadomość:\n$message\n";
-
-// ==========================================
-// POPRAWIONE NAGŁÓWKI (Deliverability)
-// ==========================================
-// Ważne: 'From' powinno być domeną serwera, a nie mailem użytkownika.
-// Ustawiamy Reply-To na email użytkownika.
-$server_domain = $_SERVER['SERVER_NAME'];
+// Nagłówki i Sender
+$server_domain = "katosalsahub.pl"; // Hardcoded domain
 $from_email = "noreply@" . $server_domain;
 
 $headers = "From: Kato Salsa Hub <$from_email>\r\n";
-$headers .= "Reply-To: $name <$email>\r\n";
-$headers .= "MIME-Version: 1.0\r\n";
+$headers .= "Reply-To: $email\r\n";
 $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-$headers .= "X-Mailer: PHP/" . phpversion();
+$headers .= "Return-Path: <$from_email>\r\n"; // Ważne dla debugowania zwrotek
 
-// Wysłanie maila
-$mailResult = mail($to, $subject, $email_content, $headers);
+// WYSYŁKA
+debug_log("Attempting to send email from $from_email to $to");
 
-// Logowanie
-$logEntry = date('Y-m-d H:i:s') . " - To: $to - Result: " . ($mailResult ? 'SUCCESS' : 'FAILURE') . "\n";
-// Zapisz w tym samym katalogu co skrypt (nie wymaga uprawnień do data, łatwiej sprawdzić)
-file_put_contents('email_debug.log', $logEntry, FILE_APPEND);
+// Użycie parametru -f dla sendmaila
+$mailResult = mail($to, $subject, $email_content, $headers, "-f$from_email");
 
 if ($mailResult) {
-    http_response_code(200);
-    echo json_encode(["status" => "success", "message" => "Dziękujemy! Wiadomość została wysłana."]);
+    debug_log("Mail SUCCESS.");
+    echo json_encode(['success' => true, 'message' => 'Wiadomość wysłana pomyślnie!']);
 } else {
-    http_response_code(500);
-    echo json_encode(["status" => "error", "message" => "Serwer odrzucił wysyłkę. Sprawdź plik email_debug.txt."]);
+    $error = error_get_last();
+    debug_log("Mail FAILED. System Error: " . print_r($error, true));
+    echo json_encode(['success' => false, 'message' => 'Błąd wysyłania (Server Error). Sprawdź logi.']);
 }
 ?>
