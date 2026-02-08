@@ -1,3 +1,4 @@
+console.warn('WIKI.JS EXECUTED');
 /**
  * Salsopedia Wiki Logic v12
  * Event-Driven Architecture (Router -> page:loaded -> mountWiki)
