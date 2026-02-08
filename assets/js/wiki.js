@@ -261,6 +261,7 @@ async function handleFormSubmit(e) {
 }
 
 // Fetch Terms
+// Fetch Terms
 async function fetchTerms() {
     if(!grid) return; // Safety check
     grid.innerHTML = '';
