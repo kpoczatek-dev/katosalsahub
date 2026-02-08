@@ -26,12 +26,11 @@ document.addEventListener('submit', async function(e) {
         submitBtn.innerHTML = '<span>Wysyłanie...</span>';
         
         try {
+            // Send as FormData (Standard POST) like Fuego Lingua
             const response = await fetch('assets/php/contact.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+                // No headers needed, browser sets Content-Type: multipart/form-data
+                body: formData
             });
             
             const result = await response.json();
