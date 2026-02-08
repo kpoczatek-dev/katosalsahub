@@ -318,6 +318,10 @@ async function fetchPendingTerms() {
         sessionStorage.setItem('katoAdmin', 'true');
     }
 
+    console.log("Fetching pending terms..."); // Debug
+    if(loading) loading.style.display = 'flex';
+    grid.innerHTML = '';
+    // console.log("Fetching pending terms..."); // Debug
     if(loading) loading.style.display = 'flex';
     grid.innerHTML = '';
     
@@ -339,6 +343,7 @@ async function fetchPendingTerms() {
         console.error('Error fetching pending:', error);
     }
 }
+window.fetchPendingTerms = fetchPendingTerms;
 
 // Render Terms
 function renderTerms(terms, isPendingMode = false) {
