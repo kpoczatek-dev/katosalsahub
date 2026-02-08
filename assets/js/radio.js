@@ -6,6 +6,7 @@
 let radioInitialized = false;
 
 function initRadioOnce() {
+    console.log('RadioJS: initRadioOnce called', { radioInitialized });
     if (radioInitialized) {
         // UI Update Loop for Navigation
         // Even if initialized, DOM buttons might be new.
@@ -36,6 +37,7 @@ function initRadio() {
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#header-radio-play, #radio-play');
         if (btn) {
+            console.log('RadioJS: Play button clicked', btn.id);
             e.preventDefault();
             toggleRadio();
         }
