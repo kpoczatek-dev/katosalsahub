@@ -295,6 +295,7 @@ main {
   background: var(--card);
   width: 100%;
   height: 100%;
+  max-width: 100%;
   padding: 16px;
   overflow-y: auto;
 }
@@ -431,6 +432,7 @@ main {
 /* --- Hero Section --- */
 .hero-section {
     min-height: 100vh;
+    min-height: 100svh; /* Mobile Viewport Fix */
     display: flex;
     flex-direction: column; /* Mobile Default */
     align-items: center;
@@ -461,7 +463,7 @@ main {
     position: relative;
     min-height: 300px;
     width: 100%;
-    overflow: hidden; /* Fix Emoji Overflow */
+    overflow: hidden; /* Fix Emoji Overflow on Mobile */
 }
 
 .dancing-emoji {
@@ -489,7 +491,8 @@ main {
         transform: none;
     }
     .hero-visual {
-        overflow: visible;
+        overflow-x: clip; /* Safer than visible */
+        overflow-y: visible;
     }
 }
 
@@ -558,7 +561,7 @@ main {
 @media (min-width: 968px) {
     .radio-wrapper {
         grid-template-columns: 1fr 1.5fr;
-        padding: 60px;
+        padding: clamp(24px, 4vw, 60px); /* Clamp padding */
     }
     .vinyl-disc {
         width: 250px;
