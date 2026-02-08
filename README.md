@@ -1,52 +1,72 @@
-# 💃 Kato Salsa Hub
+# Kato Salsa Hub & Salsopedia - Instrukcja Obsługi
 
-**Official website of Kato Salsa Hub** – a grassroots initiative bringing together salsa and Latin dance lovers in Katowice, Poland.
-
-🔗 [Visit the site](https://katosalsahub.pl)
+Witaj w dokumentacji projektu **Kato Salsa Hub**. Poniżej znajdziesz instrukcje jak zarządzać stroną, Salsopedią i rozwiązywać typowe problemy.
 
 ---
 
-## 🌟 About
+## 1. Salsopedia (Baza Wiedzy)
 
-Kato Salsa Hub is a community-driven platform promoting salsa events, social dance meetups, and Cuban culture in the Silesian region.
+### Dodawanie nowego hasła
+1. Wejdź na stronę **Salsopedia**.
+2. Kliknij czerwony przycisk **"+"** (plus) w prawym dolnym rogu.
+3. Wypełnij formularz:
+   - **Hasło:** Nazwa figury lub pojęcia.
+   - **Kategorie:** Wybierz z listy (możesz zaznaczyć kilka).
+   - **Podkategorie:** Opcjonalnie (np. Enchufla, Dile Que No).
+   - **Twoja Kategoria:** Jeśli nie ma na liście, wpisz własną.
+   - **Źródła:** Kliknij "Dodaj źródło", aby wkleić link do YouTube/Facebooka.
+   - **Definicja:** Opis figury. Możesz używać składni `[Hasło]` aby stworzyć link do innej definicji.
+4. Kliknij **"Wyślij do moderacji"**.
 
-Whether you're a beginner or an experienced dancer, our events are open, inclusive, and centered on the joy of movement and connection.
+hasło trafi na listę oczekujących.
+
+### Moderacja (Zatwierdzanie haseł)
+Jako administrator, musisz zatwierdzić zgłoszone hasła, aby stały się publiczne.
+
+1. Wejdź na stronę **Salsopedia**.
+2. Zjedź na sam dół strony (do stopki).
+3. Kliknij mały link **"[Moderacja]"**.
+4. Wpisz hasło administratora: `katoAdmin2024`.
+   *(Hasło zostanie zapamiętane w przeglądarce do czasu zamknięcia karty)*.
+5. Zobaczysz listę haseł oznaczonych jako "Oczekuje na moderację...".
+6. Użyj przycisków:
+   - 🟢 **Zatwierdź:** Hasło zostanie opublikowane natychmiast.
+   - 🔴 **Odrzuć:** Hasło zostanie trwale usunięte.
 
 ---
 
-## 📌 Features of the site
-
-- Clean, fast-loading static site (HTML + CSS only)
-- Homepage with Cuban-inspired visuals and clear event call-to-action
-- Integrated contact form
-- Google Maps for event locations
-- Responsive layout for mobile and desktop
+## 2. Radio (Timba Nation)
+Radio działa w tle, nawet gdy przechodzisz między podstronami (SPA).
+- **Play:** Kliknij przycisk Play w nagłówku lub w sekcji Radio.
+- **Stop:** Kliknij to samo miejsce, aby zatrzymać.
+- Jeśli radio przestanie grać po odświeżeniu strony, musisz włączyć je ponownie (ograniczenia przeglądarek w autoodtwarzaniu).
 
 ---
 
-## 📦 Technologies Used
-
-- HTML5 / CSS3 (no JavaScript yet)
-- Hosted on Netlify
+## 3. Formularz Kontaktowy
+Znajduje się na stronie głównej w sekcji "Kontakt".
+- Wiadomości są wysyłane na Twój adres e-mail (skonfigurowany w `assets/php/contact.php`).
+- W razie problemów z dostarczaniem maili, sprawdź logi na serwerze:
+  `https://katosalsahub.pl/assets/data/email_debug.txt`
 
 ---
 
-## 🚀 Run locally
+## 4. Rozwiązywanie Problemów
 
-```bash
-git clone https://github.com/Krzysiek742/kato-salsa-hub.git
-cd kato-salsa-hub
-start index.html  # or open in your browser
-🧠 Future ideas
-Add dynamic event listings (via Facebook or JSON feed)
+| Problem | Rozwiązanie |
+|---------|-------------|
+| **Nie widzę nowych zmian na stronie** | Naciśnij `Ctrl + F5` (Windows) lub `Cmd + Shift + R` (Mac), aby wymusić odświeżenie. |
+| **Błędy "SyntaxError" w konsoli** | To stary błąd pamięci podręcznej. Zrobiliśmy "Cache Busting", więc po odświeżeniu powinien zniknąć na zawsze. |
+| **Nie mogę się zalogować do moderacji** | Upewnij się, że wpisujesz hasło `katoAdmin2024` (bez spacji). Sprawdź czy nie masz blokady wyskakujących okienek (pop-up). |
+| **Radio przerywa** | Sprawdź łącze internetowe. Strumień jest zewnętrzny, więc zależy od nadawcy (Zenoplapa). |
 
-Multilingual support (PL / EN)
+---
 
-Photo gallery & community contributions
+## Dla Dewelopera (Struktura Plików)
+- `assets/data/salsopedia.json` - Główna baza haseł.
+- `assets/data/pending_edits.json` - Hasła oczekujące.
+- `assets/php/` - Skrypty backendowe (mail, zapis plików).
+- `assets/js/wiki.js` - Logika Salsopedii.
+- `assets/js/router.js` - Nawigacja bez przeładowania (SPA).
 
-JavaScript enhancements (animations, event filters)
-
-🤝 Want to contribute?
-Feel free to open an issue or pull request with ideas, improvements or feedback.
-
-📸 Screenshot
+*Dokumentacja wygenerowana przez Antigravity (Salsopedia V6)*

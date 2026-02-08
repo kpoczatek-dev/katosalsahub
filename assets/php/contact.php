@@ -74,7 +74,7 @@ $mailResult = mail($to, $subject, $email_content, $headers);
 
 // Logowanie
 $logEntry = date('Y-m-d H:i:s') . " - To: $to - Result: " . ($mailResult ? 'SUCCESS' : 'FAILURE') . "\n";
-file_put_contents('email_debug.txt', $logEntry, FILE_APPEND);
+file_put_contents('../data/email_debug.txt', $logEntry, FILE_APPEND);
 
 if ($mailResult) {
     http_response_code(200);
