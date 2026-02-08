@@ -27,6 +27,14 @@ document.addEventListener('page:loaded', (e) => {
 });
 
 async function mountWiki() {
+    // ⚠️ ARCHITECTURE GUARD: DO NOT GROW THIS FUNCTION.
+    // Ensure idempotency. Listeners attached here must target local DOM elements (which are replaced on nav).
+    // Global listeners should be attached ONCE at top-level.
+    
+    // Defensive Check (User Recommendation)
+    const root = document.getElementById('wikiGrid');
+    if (!root) return;
+
     console.log('Mounting Wiki...');
     AppState.ui.loading = document.getElementById('loading');
     
@@ -374,7 +382,7 @@ function getCategoryName(code) {
     return map[code] || code;
 }
 
-// Custom Select (Simplified)
+// Custom Select (Simplified & Leak-Free)
 class CustomSelect {
     constructor(wrapper) {
         this.wrapper = wrapper;
@@ -396,7 +404,11 @@ class CustomSelect {
         
         // Toggle
         this.trigger.addEventListener('click', (e) => {
-             e.stopPropagation();
+             e.stopPropagation(); // Prevent global close from firing immediately
+             // Close all others
+             document.querySelectorAll('.select-options.open').forEach(el => {
+                 if(el !== this.options) el.classList.remove('open');
+             });
              this.options.classList.toggle('open');
         });
         
@@ -406,7 +418,8 @@ class CustomSelect {
             item.className = 'option-item';
             item.textContent = opt.text;
             item.dataset.value = opt.value;
-            item.addEventListener('click', () => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation(); // Keep menu handling local
                 this.select.value = opt.value;
                 this.trigger.textContent = opt.text;
                 this.options.classList.remove('open');
@@ -415,9 +428,14 @@ class CustomSelect {
             this.options.appendChild(item);
         });
         
-        // Close on outside click
-        document.addEventListener('click', (e) => {
-            if(!this.wrapper.contains(e.target)) this.options.classList.remove('open');
-        });
+        // Note: NO document listener here. Handled globally.
     }
 }
+
+// Global Click Handler for Selects (Prevents Leaks)
+document.addEventListener('click', () => {
+    document.querySelectorAll('.select-options.open').forEach(opt => {
+        opt.classList.remove('open');
+    });
+});
+

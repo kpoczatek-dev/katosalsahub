@@ -17,8 +17,7 @@ function initRadioOnce() {
     initRadio();
 }
 
-document.addEventListener('DOMContentLoaded', initRadioOnce);
-document.addEventListener('page:loaded', initRadioOnce);
+// Listeners are handled at the end of file for singleton pattern
 
 // Audio Object Scope
 const streamUrl = 'https://stream.zeno.fm/g0zpm0pypuhvv';
@@ -157,13 +156,20 @@ function initRadio() {
         }
     }
 
-    // Expose for Router
-    window.initRadio = init;
+    // Expose for debugging if needed
+    window.initRadio = initRadioOnce;
 
-    // Run initially
+    // Run initially (Singleton Pattern)
     if(document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', initRadioOnce);
     } else {
-        init();
+        initRadioOnce();
     }
+    
+    // UI Update on Navigation (Radio persists, UI changes)
+    document.addEventListener('page:loaded', () => {
+        if (radioInitialized && window.updateGlobalRadioUI) {
+            window.updateGlobalRadioUI();
+        }
+    });
 });

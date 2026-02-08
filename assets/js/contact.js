@@ -9,7 +9,7 @@ document.addEventListener('submit', async function(e) {
         // Pobranie przycisku i elementów formularza
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
-        const messageArea = document.getElementById('form-message') || createMessageArea(form);
+        const messageArea = getMessageArea(form);
         
         // Pobieranie wartości
         const formData = new FormData(form);
@@ -53,14 +53,17 @@ document.addEventListener('submit', async function(e) {
 });
 
 // Helper do tworzenia miejsca na komunikaty
-function createMessageArea(form) {
-    const div = document.createElement('div');
-    div.id = 'form-message';
-    div.style.marginBottom = '15px';
-    div.style.padding = '10px';
-    div.style.borderRadius = '8px';
-    div.style.display = 'none';
-    form.insertBefore(div, form.firstChild);
+function getMessageArea(form) {
+    let div = form.querySelector('.form-message');
+    if (!div) {
+        div = document.createElement('div');
+        div.className = 'form-message'; // Class instead of ID
+        div.style.marginBottom = '15px';
+        div.style.padding = '10px';
+        div.style.borderRadius = '8px';
+        div.style.display = 'none';
+        form.insertBefore(div, form.firstChild);
+    }
     return div;
 }
 
