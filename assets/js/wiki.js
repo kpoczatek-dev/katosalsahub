@@ -1,3 +1,5 @@
+"use strict";
+
 const API_URL = 'assets/php/wiki.php';
 let allTerms = [];
 let currentCategory = 'all';
@@ -292,17 +294,14 @@ async function fetchTerms() {
         try {
             allTerms = JSON.parse(text);
         } catch (e) {
-            // Alert user about raw response (debug)
             console.error("JSON Parse Error", e, text);
-            // Show snippet of response to diagnose PHP errors
-            alert(`BŁĄD DANYCH: Serwer zwrócił coś dziwnego.\n\nPierwsze 100 znaków:\n"${text.substring(0, 100)}..."`);
-            throw new Error('Błędny format danych z serwera');
+            throw new Error(`Błąd danych z serwera: ${text.substring(0, 50)}...`);
         }
         
         // Handle Empty Array
         if(!Array.isArray(allTerms)) {
              allTerms = []; 
-             alert("BŁĄD: Otrzymano dane, ale nie są listą haseł.");
+             console.warn("Received data is not an array");
         }
 
         renderTerms(allTerms); // Render all initially
@@ -765,29 +764,4 @@ async function handleFormSubmit(e) {
     }
 }
 
-// Debug Function
-window.debugFetch = async function() {
-    const url = 'assets/php/wiki.php?t=' + new Date().getTime();
-    console.log('DEBUG: Fetching ' + url);
-    try {
-        const resp = await fetch(url);
-        const text = await resp.text();
-        console.log('DEBUG: Raw Response:', text);
-        
-        if(text.length > 500) {
-            alert('Otrzymano dane (' + text.length + ' znaków). Sprawdź konsolę (F12). Początek: \n' + text.substring(0, 200));
-        } else {
-             alert('Otrzymano: \n' + text);
-        }
-        
-        try {
-            const json = JSON.parse(text);
-            alert('JSON Poprawny! Ilość haseł: ' + json.length);
-        } catch(e) {
-            alert('BŁĄD JSON PARSE: ' + e.message);
-        }
-
-    } catch(e) {
-        alert('Błąd Fetch (Sieć/Serwer): ' + e.message);
-    }
-};
+// End of wiki.js

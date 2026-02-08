@@ -48,9 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode($pending);
     } else {
         // Return verified/all terms
-        ob_clean(); // Clear any previous output/warnings
+        ob_clean(); 
         $terms = readJSON($salsopediaFile);
-        echo json_encode($terms);
+        
+        $json = json_encode($terms);
+        if ($json === false) {
+             http_response_code(500);
+             echo json_encode(["error" => "JSON Encode Failed: " . json_last_error_msg()]);
+        } else {
+             echo $json;
+        }
     }
     exit;
 }
