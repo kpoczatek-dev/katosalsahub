@@ -274,7 +274,22 @@ async function processModeration(id, action) {
         const result = await response.json();
 
         if (result.success) {
-            fetchPendingTerms(); // Refresh
+            // Optimistic UI: Remove locally to preserve scroll/focus
+            const card = document.getElementById('card-' + id);
+            if (card) {
+                card.remove();
+            }
+            
+            // Update Local State
+            if (AppState.pending) {
+                AppState.pending = AppState.pending.filter(t => t.id !== id);
+                
+                // If list becomes empty, show message
+                if (AppState.pending.length === 0) {
+                    const grid = document.getElementById('wikiGrid');
+                    if(grid) grid.innerHTML = '<div class="no-results">Brak oczekujących haseł.</div>';
+                }
+            }
         } else {
              alert("Błąd: " + result.error);
              if(result.error && result.error.includes("autoryzacji")) {
