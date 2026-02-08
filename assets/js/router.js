@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const href = link.getAttribute('href');
         if (!href) return;
 
+        // Ignore special targets
+        if (link.target === '_blank' || link.hasAttribute('download') || link.relList.contains('external')) return;
+
         // Origin Check (Robust)
         try {
             const targetUrl = new URL(href, window.location.origin);
@@ -42,7 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial Event (Context: Initial)
-    dispatchPageLoaded(window.location.pathname + window.location.hash, { initial: true });
+    const initialUrl = window.location.pathname + window.location.hash;
+    dispatchPageLoaded(initialUrl, { initial: true });
+    updateNavLinks(initialUrl); // Ensure active state on load
 });
 
 async function navigateTo(url) {
@@ -54,7 +59,7 @@ async function loadPage(url) {
     const token = ++navToken; // Increment token
     const appContent = document.getElementById('app-content');
     
-    // Only fade if it's a new page load
+    // Fade out for transition
     appContent.style.opacity = '0.5';
 
     try {
