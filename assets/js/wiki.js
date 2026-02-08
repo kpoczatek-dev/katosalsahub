@@ -52,7 +52,7 @@ function setupInteractions() {
     }
 
     // Submission Form
-    const form = document.getElementById('termForm');
+    const form = document.getElementById('wikiForm');
     if(form) form.addEventListener('submit', handleFormSubmit);
 
     // Modal (Self-Contained Delegation)
@@ -430,5 +430,22 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.select-options.open').forEach(opt => {
         opt.classList.remove('open');
     });
+});
+
+// --- Lifecycle (Critical) ---
+
+document.addEventListener('page:loaded', (e) => {
+    const path = e.detail?.path || window.location.pathname;
+    // mountWiki only if on Salsopedia page
+    if (path.includes('salsopedia')) {
+        mountWiki();
+    }
+});
+
+// Fallback for direct refresh (when page:loaded is skipped by router)
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('wikiGrid')) {
+        mountWiki();
+    }
 });
 
