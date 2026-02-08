@@ -170,10 +170,19 @@ function updateTrigger(originalSelect, triggerElement, placeholder) {
     }
 }
 
-// Handlers
-function handleSearch() {
-    renderTerms(allTerms);
+// Utilities
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
 }
+
+// Handlers
+const handleSearch = debounce(() => {
+    renderTerms(allTerms);
+}, 300);
 
 function handleCategoryClick(e) {
     if (e.target.tagName === 'LI') {
