@@ -1,3 +1,4 @@
+console.error('WIKI.JS LOADED — TOP OF FILE');
 /**
  * Salsopedia Wiki Logic v12
  * Event-Driven Architecture (Router -> page:loaded -> mountWiki)
@@ -443,7 +444,16 @@ document.addEventListener('page:loaded', (e) => {
 });
 
 // Fallback for direct refresh (when page:loaded is skipped by router)
-document.addEventListener('DOMContentLoaded', () => {
+function onReady(fn) {
+    if (document.readyState !== 'loading') {
+        fn();
+    } else {
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+}
+
+// 2. Direct Load (Robust)
+onReady(() => {
     if (document.getElementById('wikiGrid')) {
         mountWiki();
     }
