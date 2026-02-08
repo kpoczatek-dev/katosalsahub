@@ -37,12 +37,18 @@ function saveJSON($file, $data) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $action = $_GET['action'] ?? 'list';
 
+    // Suppress warnings in JSON output
+    error_reporting(0);
+    ini_set('display_errors', 0);
+
     if ($action === 'pending') {
         // Return pending edits
+        ob_clean(); // Clear any previous output/warnings
         $pending = readJSON($pendingFile);
         echo json_encode($pending);
     } else {
         // Return verified/all terms
+        ob_clean(); // Clear any previous output/warnings
         $terms = readJSON($salsopediaFile);
         echo json_encode($terms);
     }
