@@ -1807,3 +1807,45 @@ body {
         font-size: 20px;
     }
 }
+
+/* Wiki Badges & Status */
+.cat-badge {
+    display: inline-block;
+    padding: 0.35em 0.8em;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    /* Fallback */
+    background: #444; 
+    color: #eee;
+}
+
+.cat-badge.main-cat {
+    /* Teal/Green */
+    background: hsla(160, 90%, 25%, 0.3);
+    color: hsla(160, 90%, 75%, 1);
+    border: 1px solid hsla(160, 90%, 35%, 0.3);
+}
+
+.cat-badge.sub-cat {
+    /* Purple/Pink */
+    background: hsla(280, 80%, 35%, 0.3);
+    color: hsla(280, 90%, 80%, 1);
+    border: 1px solid hsla(280, 80%, 45%, 0.3);
+}
+
+.status-verified {
+    display: inline-flex;
+    align-items: center;
+    background: hsla(130, 80%, 30%, 0.2);
+    color: hsla(130, 90%, 70%, 1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    border: 1px solid hsla(130, 80%, 40%, 0.3);
+    margin-left: 10px;
+}
