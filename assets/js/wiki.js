@@ -1,4 +1,3 @@
-console.warn('WIKI.JS EXECUTED');
 /**
  * Salsopedia Wiki Logic v12
  * Event-Driven Architecture (Router -> page:loaded -> mountWiki)
@@ -17,18 +16,9 @@ const AppState = {
 };
 
 // --- Lifecycle ---
-
-// Sole Entry Point
-document.addEventListener('page:loaded', (e) => {
-    // Check if we are on Wiki page
-    const path = e.detail ? e.detail.path : window.location.pathname.replace(/^\//,'');
-    if (path.includes('salsopedia.html')) {
-        mountWiki();
-    }
-});
+// (Listeners are handled at the bottom of the file)
 
 async function mountWiki() {
-    console.log('mountWiki CALLED');
     // ⚠️ ARCHITECTURE GUARD: DO NOT GROW THIS FUNCTION.
     // Ensure idempotency. Listeners attached here must target local DOM elements (which are replaced on nav).
     // Global listeners should be attached ONCE at top-level.
@@ -90,11 +80,9 @@ function setupInteractions() {
 // --- Data Logic ---
 
 async function fetchTerms() {
-    console.log('fetchTerms start');
     try {
         const response = await fetch(API_URL + '?action=list');
         const data = await response.json();
-        console.log('Terms fetched:', data ? data.length : 0);
         AppState.terms = data;
         
         // Initial Render
