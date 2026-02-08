@@ -289,31 +289,38 @@ async function fetchTerms() {
 
         const text = await response.text();
         
-        // Validate JSON before parsing
         try {
-            const data = JSON.parse(text);
-            allTerms = data;
-            renderTerms(allTerms);
+            allTerms = JSON.parse(text);
         } catch (e) {
-            console.error('Invalid JSON received:', text.substring(0, 100)); // Log first 100 chars
-            throw new Error('Otrzymano niepoprawne dane z serwera (może to być błąd PHP lub HTML). Sprawdź konsolę.');
+            // Alert user about raw response (debug)
+            console.error("JSON Parse Error", e, text);
+            // Show snippet of response to diagnose PHP errors
+            alert(`BŁĄD DANYCH: Serwer zwrócił coś dziwnego.\n\nPierwsze 100 znaków:\n"${text.substring(0, 100)}..."`);
+            throw new Error('Błędny format danych z serwera');
+        }
+        
+        // Handle Empty Array
+        if(!Array.isArray(allTerms)) {
+             allTerms = []; 
+             alert("BŁĄD: Otrzymano dane, ale nie są listą haseł.");
         }
 
-        if(loading) loading.style.display = 'none';
-        
+        renderTerms(allTerms); // Render all initially
     } catch (error) {
-        console.error('Error fetching terms:', error);
-        if(loading) {
-            loading.style.display = 'none';
+        console.error('Błąd pobierania:', error);
+        const grid = document.getElementById('wikiGrid');
+        if (grid) {
             grid.innerHTML = `
-                <div class="no-results" style="display:block; color: var(--cuban-red);">
-                    <i class="fas fa-exclamation-circle"></i>
+                <div class="wiki-error">
                     <h3>Błąd wczytywania danych</h3>
                     <p>${error.message}</p>
                     <button onclick="fetchTerms()" class="btn-verify" style="margin-top:10px">Spróbuj ponownie</button>
+                    <br><small style="opacity:0.7">Jeśli widzisz ten błąd na serwerze, zgłoś go administratorowi.</small>
                 </div>
             `;
         }
+    } finally {
+        toggleLoading(false);
     }
 }
 
