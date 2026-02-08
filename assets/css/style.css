@@ -18,15 +18,18 @@
 }
 
 html {
-	scroll-behavior: smooth;
+    scroll-behavior: smooth;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    max-width: 100vw;
 }
 
 body {
-	font-family: 'Montserrat', sans-serif;
-	background: var(--dark-bg);
-	color: var(--text-white);
-	overflow-x: hidden;
-	line-height: 1.6;
+    font-family: 'Montserrat', sans-serif;
+    background: var(--dark-bg);
+    color: var(--text-white);
+    overflow-x: hidden;
+    max-width: 100%;
+    line-height: 1.6;
 }
 
 /* Animowane tło */
