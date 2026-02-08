@@ -172,4 +172,3 @@ function initRadio() {
             window.updateGlobalRadioUI();
         }
     });
-});
