@@ -45,7 +45,7 @@ if (empty($name) || empty($email) || empty($message)) {
 }
 
 // Konfiguracja Email
-$to = "krzysztof.poczatek@gmail.com"; // Twój email
+$to = "kontakt@twojastrnawww.pl"; // Twój email
 $subject = "Nowa wiadomość od: $name";
 $email_content = "Imię: $name\nEmail: $email\n\nWiadomość:\n$message";
 
