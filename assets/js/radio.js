@@ -1,23 +1,37 @@
 /**
- * Timba Nation Radio Logic
- * Handles the radio playback, state synchronization between buttons, and animations.
+ * Timba Nation Radio Service
+ * Runs once, maintains state, updates UI on events.
  */
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Elements are now selected dynamically in init()
+let radioInitialized = false;
 
-    
-    // Audio Object
-    const streamUrl = 'https://stream.zeno.fm/g0zpm0pypuhvv';
-    let radioAudio = new Audio(streamUrl);
-    let isPlaying = false;
-    let isLoading = false;
-
-    // Initialize
-    function init() {
-        // Update UI immediately (find elements just for UI update)
-        updateGlobalUI();
+function initRadioOnce() {
+    if (radioInitialized) {
+        // UI Update Loop for Navigation
+        // Even if initialized, DOM buttons might be new.
+        if(window.updateGlobalRadioUI) window.updateGlobalRadioUI();
+        return; 
     }
+    
+    radioInitialized = true;
+    initRadio();
+}
+
+document.addEventListener('DOMContentLoaded', initRadioOnce);
+document.addEventListener('page:loaded', initRadioOnce);
+
+// Audio Object Scope
+const streamUrl = 'https://stream.zeno.fm/g0zpm0pypuhvv';
+let radioAudio = new Audio(streamUrl);
+let isPlaying = false;
+let isLoading = false;
+
+// Initialize
+function initRadio() {
+    // Make update function global for re-use
+    window.updateGlobalRadioUI = updateGlobalUI;
+    updateGlobalUI();
+}
     
     // Global Click Listener (Event Delegation) - Handles dynamic elements
     document.addEventListener('click', (e) => {

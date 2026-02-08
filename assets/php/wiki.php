@@ -1,19 +1,16 @@
 <?php
 /**
- * Salsopedia Backend Script
- * Handles reading terms and submitting new/edited terms for moderation.
- * Updated for v6: Multi-categories, Source, Verification Status.
- * Refactored for v7: PROPER POST SUPPORT (Fuego Pattern)
+ * Salsopedia Unified Backend (v9)
+ * Single source of truth for List, Pending, Submit, Moderate.
+ * Implements User's strict architecture and data model.
  */
 
-// Start Output Buffering
-ob_start();
-
 // Headers
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *'); 
 header('Access-Control-Allow-Methods: GET, POST');
 
+// Paths
 $salsopediaFile = '../data/salsopedia.json';
 $pendingFile = '../data/pending_edits.json';
 
@@ -22,7 +19,32 @@ if (!file_exists('../data')) {
     mkdir('../data', 0777, true);
 }
 
-// Helpers
+// === ROUTER ===
+$action = $_GET['action'] ?? 'list';
+
+switch ($action) {
+    case 'list':
+        respond(readJSON($salsopediaFile));
+        break;
+
+    case 'pending':
+        respond(readJSON($pendingFile));
+        break;
+
+    case 'submit':
+        handleSubmit();
+        break;
+
+    case 'moderate':
+        handleModeration();
+        break;
+
+    default:
+        error('Nieznana akcja');
+}
+
+// === HELPERS ===
+
 function readJSON($file) {
     if (!file_exists($file)) return [];
     $content = file_get_contents($file);
@@ -33,120 +55,165 @@ function saveJSON($file, $data) {
     return file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
-// === GET Request ===
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $action = $_GET['action'] ?? 'list';
-    error_reporting(0);
-    ini_set('display_errors', 0);
-
-    if ($action === 'pending') {
-        ob_clean();
-        $pending = readJSON($pendingFile);
-        echo json_encode($pending);
-    } else {
-        ob_clean(); 
-        $terms = readJSON($salsopediaFile);
-        $json = json_encode($terms);
-        if ($json === false) {
-             http_response_code(500);
-             echo json_encode(["error" => "JSON Encode Failed: " . json_last_error_msg()]);
-        } else {
-             echo $json;
-        }
-    }
+function respond($data) {
+    echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-// === POST Request: Submit Edit/New Term/Verification ===
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Determine Input Type (Defensive)
-    $input = [];
-    $rawInput = file_get_contents('php://input');
-    $jsonInput = json_decode($rawInput, true);
+function error($msg, $code = 400) {
+    http_response_code($code);
+    respond(['success' => false, 'error' => $msg]);
+}
 
-    if (is_array($jsonInput)) {
-        $input = $jsonInput;
-    } else {
-        $input = $_POST;
+function getInput() {
+    // Robust input handling (JSON or POST)
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (is_array($input)) return $input;
+    return $_POST;
+}
+
+function normalizeEntry($input) {
+    // Process Categories (Ensure Array)
+    $cats = $input['category'] ?? ['dance'];
+    if (!is_array($cats)) $cats = is_string($cats) ? explode(',', $cats) : [$cats];
+    $cats = array_filter($cats);
+    if (empty($cats)) $cats = ['dance'];
+
+    // Process Subcategories
+    $subs = $input['subcategory'] ?? [];
+    if (!is_array($subs)) $subs = is_string($subs) ? explode(',', $subs) : [$subs];
+
+    // Process Sources (Defensive)
+    $sources = $input['source'] ?? [];
+    // If coming from POST arrays (source_name[] / source_url[])
+    if (empty($sources) && isset($input['source_name'])) {
+         $names = $input['source_name'];
+         $urls = $input['source_url'] ?? [];
+         if (is_array($names)) {
+             for ($i = 0; $i < count($names); $i++) {
+                if (!empty($names[$i]) || !empty($urls[$i])) {
+                    $sources[] = [
+                        'name' => strip_tags(trim($names[$i])),
+                        'url' => strip_tags(trim($urls[$i] ?? ''))
+                    ];
+                }
+             }
+         }
     }
-
-    // Validation
-    $term = isset($input['term']) ? strip_tags(trim($input['term'])) : '';
-    $author = isset($input['author']) ? strip_tags(trim($input['author'])) : '';
     
-    if (empty($term) || empty($author)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Hasło i Podpis są wymagane.']);
-        exit;
-    }
+    return [
+        'id' => $input['id'] ?? uniqid('term_'),
+        'term' => strip_tags(trim($input['term'])),
+        'definition' => strip_tags(trim($input['definition'] ?? '')),
+        'author' => strip_tags(trim($input['author'])),
+        'author_link' => strip_tags(trim($input['author_link'] ?? '')),
+        'category' => array_values($cats),
+        'subcategory' => array_values($subs),
+        'user_category' => strip_tags(trim($input['user_category'] ?? '')),
+        'source' => $sources,
+        'status' => 'unverified',
+        'verification_count' => 0,
+        'last_updated' => date('Y-m-d')
+    ];
+}
+
+// === ACTIONS ===
+
+function handleSubmit() {
+    global $pendingFile;
+
+    $input = getInput();
+    if (empty($input)) error('Brak danych');
+
+    if (empty($input['term']) || empty($input['author']))
+        error('Hasło i autor wymagane');
 
     // Honeypot
     if (!empty($input['surname'])) {
-        // Pretend success for bot
-        echo json_encode(['success' => true]);
-        exit;
+        respond(['success' => true]); // Fake success
     }
 
-    // Process Categories
-    $categories = isset($input['category']) ? $input['category'] : [];
-    if (!is_array($categories)) {
-        // If coming from POST array or single string
-        $categories = is_string($categories) ? explode(',', $categories) : [$categories];
-    }
-    $categories = array_filter($categories);
-    if(empty($categories)) $categories = ['dance'];
-
-    // Process Subcategories
-    $subcategories = isset($input['subcategory']) ? $input['subcategory'] : [];
-    if (!is_array($subcategories)) {
-         $subcategories = is_string($subcategories) ? explode(',', $subcategories) : [$subcategories];
+    $entry = normalizeEntry($input);
+    
+    // Add Pending Logic
+    $entry['pending'] = true;
+    $entry['pending_action'] = !empty($input['id']) ? 'edit' : 'new';
+    
+    // Verification Request Flag
+    if (!empty($input['verification_request'])) {
+        $entry['pending_action'] = 'verify';
     }
 
-    // Process Sources (Reconstruct from Arrays if POST)
-    $sources = [];
-    if (isset($input['source']) && is_array($input['source']) && isset($input['source'][0]['name'])) {
-        // Already structured (JSON)
-        $sources = $input['source']; 
-    } elseif (isset($input['source_name']) && is_array($input['source_name'])) {
-        // POST Arrays
-        $names = $input['source_name'];
-        $urls = isset($input['source_url']) ? $input['source_url'] : [];
-        for ($i = 0; $i < count($names); $i++) {
-            if (!empty($names[$i]) || !empty($urls[$i])) {
-                $sources[] = [
-                    'name' => strip_tags(trim($names[$i])),
-                    'url' => strip_tags(trim($urls[$i] ?? ''))
-                ];
-            }
-        }
-    }
-
-    // Create Entry
-    $entry = [
-        'token' => bin2hex(random_bytes(16)),
-        'timestamp' => date('Y-m-d H:i:s'),
-        'term' => $term,
-        'definition' => strip_tags(trim($input['definition'] ?? '')),
-        'author' => $author,
-        'author_link' => strip_tags(trim($input['author_link'] ?? '')),
-        'category' => $categories, 
-        'subcategory' => $subcategories, 
-        'user_category' => strip_tags(trim($input['user_category'] ?? '')),
-        'source' => $sources,
-        'verification_request' => !empty($input['verification_request']) ? true : false,
-        'original_id' => $input['id'] ?? null,
-        // New fields
-        'type' => !empty($input['id']) ? 'edit' : 'new'
-    ];
-
+    // Save
     $pending = readJSON($pendingFile);
     $pending[] = $entry;
     saveJSON($pendingFile, $pending);
 
-    // TODO: Send Email Notification here (Similar to contact.php)
-    // For now just return success
+    respond(['success' => true]);
+}
+
+function handleModeration() {
+    global $pendingFile, $salsopediaFile;
+
+    $input = getInput();
+    if (empty($input)) error('Brak danych');
+
+    // Security Check
+    $pass = $input['password'] ?? $_GET['password'] ?? null;
+    if ($pass !== 'katoAdmin2024') error('Brak autoryzacji');
+
+    $id = $input['id'] ?? null;
+    $action = $input['action'] ?? null;
+
+    if (!$id || !in_array($action, ['approve', 'reject']))
+        error('Złe dane (ID lub Action)');
+
+    $pending = readJSON($pendingFile);
     
-    echo json_encode(['success' => true, 'message' => 'Zgłoszenie przyjęte do moderacji!']);
-    exit;
+    // Find by ID (not token)
+    $index = array_search($id, array_column($pending, 'id'));
+    
+    if ($index === false) error('Brak zgłoszenia o podanym ID');
+
+    $entry = $pending[$index];
+
+    if ($action === 'approve') {
+        $live = readJSON($salsopediaFile);
+        $liveIndex = array_search($id, array_column($live, 'id'));
+
+        // Prepare Live Entry (Clean pending flags)
+        $cleanEntry = $entry;
+        unset($cleanEntry['pending'], $cleanEntry['pending_action']);
+        
+        // Status Logic: Admin Approved = Verified
+        $cleanEntry['status'] = 'verified';
+        $cleanEntry['last_updated'] = date('Y-m-d');
+
+        if ($liveIndex === false) {
+            // New Term
+            $cleanEntry['verification_count'] = 1;
+            $live[] = $cleanEntry;
+        } else {
+            // Update Existing
+            $currentCount = $live[$liveIndex]['verification_count'] ?? 0;
+            $cleanEntry['verification_count'] = $currentCount + 1;
+            
+            // Merge logic (Overwrite)
+            $live[$liveIndex] = array_merge($live[$liveIndex], $cleanEntry);
+        }
+        
+        // Sort A-Z
+        usort($live, function($a, $b) {
+            return strcasecmp($a['term'], $b['term']);
+        });
+
+        saveJSON($salsopediaFile, $live);
+    }
+
+    // Remove from Pending (for both approve and reject)
+    array_splice($pending, $index, 1);
+    saveJSON($pendingFile, $pending);
+
+    respond(['success' => true]);
 }
 ?>

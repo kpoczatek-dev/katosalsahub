@@ -659,39 +659,7 @@ body {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-.footer {
-    background: #000;
-    padding: 2rem 0;
-    margin-top: 40px;
-    border-top: 1px solid #333;
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.footer-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.footer-links a {
-    color: #ccc;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: var(--cuban-orange);
-}
-
-/* Styles for Footer Brand/Social handled by global CSS, just ensuring layout */
+/* Legacy footer removed */
 
 
 /* Header Radio Button */
@@ -804,6 +772,10 @@ body {
 
 .nav-links a:hover::after {
 	width: 100%;
+}
+
+.nav-links a.active[data-page="wiki"] {
+    color: var(--cuban-orange);
 }
 
 .cta-link {
