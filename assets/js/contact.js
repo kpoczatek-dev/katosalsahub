@@ -1,8 +1,9 @@
 // Contact Form Logic with Event Delegation for SPA
 document.addEventListener('submit', async function(e) {
-    if (e.target && e.target.name === 'contact') {
-        console.log("Contact form submitted!");
+    if (e.target && (e.target.name === 'contact' || e.target.id === 'contactForm')) {
         e.preventDefault();
+        e.stopPropagation();
+        console.log("Contact form submitted!");
         const form = e.target;
         
         // Pobranie przycisku i elementów formularza

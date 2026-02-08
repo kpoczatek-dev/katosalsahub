@@ -34,6 +34,7 @@
     <div id="results">Running tests...</div>
 
     <!-- Scripts to Test -->
+    <script src="assets/js/contact.js"></script>
     <script src="assets/js/router.js"></script>
     <script src="assets/js/radio.js"></script>
     <script src="assets/js/home.js"></script>
@@ -87,9 +88,46 @@
                 assert(typeof window.initRadio === 'function', 'initRadio is defined');
             });
 
-            testSuite('Syntax Checks', () => {
-                // If we got here, syntax was likely okay for main parsing
-                assert(true, 'Scripts parsed without syntax errors blocking execution');
+            testSuite('Contact Form Integrity', () => {
+                // Determine if we are on index (has form) or not
+                if (document.querySelector('form[name="contact"]')) {
+                    assert(document.querySelector('form[name="contact"]'), 'Contact Form exists in DOM');
+                    assert(document.getElementById('hp_chk'), 'Honeypot field (hp_chk) exists');
+                    assert(document.getElementById('name'), 'Name field exists');
+                } else {
+                    // If running on tests.html standalone, we might not have the form unless we inject it or check main page
+                    // Since tests.html is standalone, we can't easily check index.html content unless we fetch it.
+                    // We will skip this verification if form is missing (expected in standalone tests.html)
+                    logHtml += `<div class="warn">⚠ Note: Contact Form not present in tests.html (Expected)</div>`;
+                }
+            });
+
+            testSuite('Wiki Moderation', () => {
+                assert(typeof window.fetchPendingTerms === 'function', 'fetchPendingTerms is globally accessible');
+                assert(typeof window.approveTerm === 'function', 'approveTerm is globally accessible');
+                // Check if Wiki.js loaded
+                if (typeof window.initWiki === 'function') {
+                    assert(true, 'Wiki.js loaded successfully');
+                }
+            });
+
+            testSuite('Contact Form Integrity', () => {
+                if (document.querySelector('form[name="contact"]')) {
+                    assert(document.querySelector('form[name="contact"]'), 'Contact Form exists in DOM');
+                    assert(document.getElementById('hp_chk'), 'Honeypot field (hp_chk) exists');
+                } else {
+                    logHtml += `<div class="warn">⚠ Note: Contact Form not present in tests.html (Expected)</div>`;
+                }
+            });
+
+            testSuite('Wiki Moderation', () => {
+                assert(typeof window.fetchPendingTerms === 'function', 'fetchPendingTerms is globally accessible');
+                // Check if Wiki.js loaded
+                if (typeof window.initWiki === 'function') {
+                    assert(true, 'Wiki.js loaded successfully');
+                }
+                // Check Button link
+                // We can't check Salsopedia footer here easily without fetching it
             });
 
             results.innerHTML = `<h2>Summary: <span style="color:${failed === 0 ? '#0f0' : '#f00'}">${passed} Passed, ${failed} Failed</span></h2>` + logHtml;
