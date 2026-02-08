@@ -1,136 +1,72 @@
-<!DOCTYPE html>
-<html lang="pl">
+<main id="app-content">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salsopedia - Kato Salsa Hub</title>
-    <meta name="description"
-        content="Salsopedia - Encyklopedia wiedzy o salsie kubańskiej. Pojęcia, figury, muzyka, historia i kultura.">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Salsopedia Header -->
+    <header class="wiki-header">
+        <div class="wiki-header-content">
+            <h1>Salsopedia</h1>
+            <p>Twoja encyklopedia wiedzy o salsie kubańskiej, muzyce i kulturze.</p>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;800&display=swap"
-        rel="stylesheet">
-    <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-
-<body>
-    <!-- Animowane tło -->
-    <div class="animated-bg">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
-
-    <!-- Navigation (Identical to index.html) -->
-    <nav class="nav-bar">
-        <div class="nav-brand-group">
-            <a href="index.html" class="nav-logo">
-                <span class="logo-text">KATO SALSA HUB</span>
-                <span class="logo-emoji">🔥</span>
-            </a>
-            <button id="header-radio-play" class="header-radio-btn" aria-label="Włącz radio">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                </svg>
-            </button>
-        </div>
-        <div class="nav-links">
-            <a href="index.html#hero">Start</a>
-            <a href="index.html#onas">O nas</a>
-            <a href="index.html#style">Style</a>
-            <a href="salsopedia.html" class="active" data-page="wiki">Salsopedia</a>
-            <a href="index.html#radio">Radio</a>
-            <a href="index.html#mapa">Lokacja</a>
-            <a href="index.html#kontakt" class="cta-link">Kontakt</a>
-        </div>
-        <div class="burger-menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </nav>
-
-    <!-- Main Content Wrapper for SPA -->
-    <main id="app-content">
-
-        <!-- Salsopedia Header -->
-        <header class="wiki-header">
-            <div class="wiki-header-content">
-                <h1>Salsopedia</h1>
-                <p>Twoja encyklopedia wiedzy o salsie kubańskiej, muzyce i kulturze.</p>
-
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" class="search-input"
-                        placeholder="Szukaj pojęcia (np. Vacilala, Timba)...">
-                </div>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input"
+                    placeholder="Szukaj pojęcia (np. Vacilala, Timba)...">
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- Main Content Area -->
-        <div class="wiki-main-container">
+    <!-- Main Content Area -->
+    <div class="wiki-main-container">
 
-            <!-- Sidebar Navigation -->
-            <aside class="wiki-sidebar">
-                <h3>Kategorie</h3>
-                <ul class="category-list" id="categoryList">
-                    <li data-category="all" class="active">Wszystkie</li>
-                    <li data-category="steps">Kroki (Podstawy)</li>
-                    <li data-category="figures">Figury (Pary)</li>
-                    <li data-category="instruments">Instrumenty</li>
-                    <li data-category="music">Muzyka</li>
-                    <li data-category="dance">Taniec</li>
-                    <li data-category="styles">Style Tańca</li>
-                    <li data-category="history">Historia</li>
-                    <li data-category="gods">Bogowie (Orishas)</li>
-                    <li data-category="instructors">Instruktorzy</li>
-                    <li data-category="schools">Szkoły Tańca</li>
-                </ul>
+        <!-- Sidebar Navigation -->
+        <aside class="wiki-sidebar">
+            <h3>Kategorie</h3>
+            <ul class="category-list" id="categoryList">
+                <li data-category="all" class="active">Wszystkie</li>
+                <li data-category="steps">Kroki (Podstawy)</li>
+                <li data-category="figures">Figury (Pary)</li>
+                <li data-category="instruments">Instrumenty</li>
+                <li data-category="music">Muzyka</li>
+                <li data-category="dance">Taniec</li>
+                <li data-category="styles">Style Tańca</li>
+                <li data-category="history">Historia</li>
+                <li data-category="gods">Bogowie (Orishas)</li>
+                <li data-category="instructors">Instruktorzy</li>
+                <li data-category="schools">Szkoły Tańca</li>
+            </ul>
 
-                <div class="sidebar-footer">
-                    <button id="showPendingBtn" class="btn-text">
-                        <i class="fas fa-history"></i> Oczekujące zmiany
-                    </button>
-                </div>
-            </aside>
+            <div class="sidebar-footer">
+                <button id="showPendingBtn" class="btn-text">
+                    <i class="fas fa-history"></i> Oczekujące zmiany
+                </button>
+            </div>
+        </aside>
+
+        <!-- Terms Grid -->
+        <section class="wiki-content">
+            <!-- Loading Spinner -->
+            <div id="loading" class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
 
             <!-- Terms Grid -->
-            <section class="wiki-content">
-                <!-- Loading Spinner -->
-                <div id="loading" class="loading-spinner">
-                    <div class="spinner"></div>
-                </div>
+            <div id="wikiGrid" class="wiki-grid"></div>
 
-                <!-- Loading Spinner -->
+            <!-- No Results Message -->
+            <div id="noResults" class="no-results hidden">
+                <i class="fas fa-search"></i>
+                <p>Nie znaleziono takiego hasła.</p>
+                <button class="btn-add-inline" onclick="openModal()">Dodaj je!</button>
+            </div>
+        </section>
 
-                <!-- Terms Grid -->
-                <div id="wikiGrid" class="wiki-grid"></div>
+    </div>
 
-                <!-- No Results Message -->
-                <div id="noResults" class="no-results hidden">
-                    <i class="fas fa-search"></i>
-                    <p>Nie znaleziono takiego hasła.</p>
-                    <button class="btn-add-inline" onclick="openModal()">Dodaj je!</button>
-                </div>
-            </section>
-
-        </div>
-    </main>
-
-
-    <!-- Floating Action Button -->
+    <!-- Floating Action Button (Moved inside main for SPA routing) -->
     <button id="addTermBtn" class="fab-add" onclick="openModal()" title="Dodaj nowe hasło">
         <i class="fas fa-plus"></i>
     </button>
 
-    <!-- Modal for Adding/Editing Terms -->
+    <!-- Modal for Adding/Editing Terms (Moved inside main for SPA routing) -->
     <div id="wikiModal" class="modal-overlay">
         <div class="modal-content wiki-modal">
             <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -172,7 +108,7 @@
                             <option value="partnerwork">W parach</option>
                             <option value="shines">Solo (Shines)</option>
                             <option value="technique">Technika</option>
-                            <option value="rhythm">Rytmika</m>
+                            <option value="rhythm">Rytmika</option>
                         </select>
                     </div>
                 </div>
@@ -223,51 +159,4 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-brand">
-                <h3>KATO SALSA HUB 🔥</h3>
-                <p>Kubańska energia w sercu Śląska</p>
-            </div>
-            <div class="footer-links">
-                <a href="index.html#hero">Start</a>
-                <a href="index.html#onas">O nas</a>
-                <a href="index.html#style">Style</a>
-                <a href="index.html#kontakt">Kontakt</a>
-                <a href="privacy.html">Polityka Prywatności</a>
-                <a href="https://dancepuls.katosalsahub.pl/" target="_blank">DancePuls Generator</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; <span id="rok">2024</span> Kato Salsa Hub. Wszystkie prawa zastrzeżone.</p>
-            <p>Designed with <i class="fas fa-heart" style="color: var(--cuban-red);"></i> by <a
-                    href="https://github.com/kpoczatek-dev" target="_blank">Krzysztof Początek</a></p>
-            <p style="margin-top:10px;"><a href="#" onclick="fetchPendingTerms(); return false;"
-                    style="color:#555; text-decoration:none; font-size:0.8rem;">[Moderacja]</a></p>
-        </div>
-    </footer>
-
-
-
-    <script src="assets/js/cookies.js"></script>
-    <script src="assets/js/wiki.js?v=cleanup"></script>
-    <script src="assets/js/radio.js"></script>
-    <script src="assets/js/home.js"></script>
-    <script src="assets/js/router.js"></script>
-    <script>
-        // Rok in footer
-        document.getElementById("rok").textContent = new Date().getFullYear();
-
-        // Burger menu logic (Adapted from index.html)
-        const burger = document.querySelector('.burger-menu');
-        const navLinks = document.querySelector('.nav-links');
-
-        burger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            burger.classList.toggle('active');
-        });
-    </script>
-</body>
-
-</html>
+</main>
