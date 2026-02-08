@@ -1,55 +1,53 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const contactForm = document.querySelector('form[name="contact"]');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Pobranie przycisku i elementów formularza
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerHTML;
-            const messageArea = document.getElementById('form-message') || createMessageArea(this);
-            
-            // Pobieranie wartości
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            
-            // Prosta validacja po stronie klienta
-            if (!data.name || !data.email || !data.message) {
-                showMessage(messageArea, 'Wypełnij wszystkie pola!', 'error');
-                return;
-            }
+// Contact Form Logic with Event Delegation for SPA
+document.addEventListener('submit', async function(e) {
+    if (e.target && e.target.name === 'contact') {
+        e.preventDefault();
+        const form = e.target;
+        
+        // Pobranie przycisku i elementów formularza
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        const messageArea = document.getElementById('form-message') || createMessageArea(form);
+        
+        // Pobieranie wartości
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Prosta validacja po stronie klienta
+        if (!data.name || !data.email || !data.message) {
+            showMessage(messageArea, 'Wypełnij wszystkie pola!', 'error');
+            return;
+        }
 
-            // Stan ładowania
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span>Wysyłanie...</span>';
+        // Stan ładowania
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Wysyłanie...</span>';
+        
+        try {
+            const response = await fetch('assets/php/contact.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
             
-            try {
-                const response = await fetch('assets/php/contact.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    showMessage(messageArea, result.message, 'success');
-                    this.reset(); // Wyczyść formularz
-                } else {
-                    showMessage(messageArea, result.message || 'Wystąpił błąd.', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage(messageArea, 'Wystąpił błąd połączenia.', 'error');
-            } finally {
-                // Przywróć przycisk
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
+            const result = await response.json();
+            
+            if (response.ok) {
+                showMessage(messageArea, result.message, 'success');
+                form.reset(); // Wyczyść formularz
+            } else {
+                showMessage(messageArea, result.message || 'Wystąpił błąd.', 'error');
             }
-        });
+        } catch (error) {
+            console.error('Error:', error);
+            showMessage(messageArea, 'Wystąpił błąd połączenia.', 'error');
+        } finally {
+            // Przywróć przycisk
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
     }
 });
 

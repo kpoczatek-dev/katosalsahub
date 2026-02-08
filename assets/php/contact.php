@@ -19,8 +19,8 @@ if (!$input) {
 // ==========================================
 // SPRAWDZENIE HONEYPOT (PLASTER MIODU)
 // ==========================================
-if (!empty($input['surname'])) {
-    // Jeśli pole 'surname' jest wypełnione, to znaczy, że to bot.
+if (!empty($input['hp_chk'])) {
+    // Jeśli pole 'hp_chk' jest wypełnione, to znaczy, że to bot.
     // Udajemy sukces, żeby bot nie próbował ponownie, ale nic nie wysyłamy.
     http_response_code(200);
     echo json_encode(["status" => "success", "message" => "Dziękujemy! Wiadomość została wysłana."]);
@@ -70,11 +70,17 @@ $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 $headers .= "X-Mailer: PHP/" . phpversion();
 
 // Wysłanie maila
-if (mail($to, $subject, $email_content, $headers)) {
+$mailResult = mail($to, $subject, $email_content, $headers);
+
+// Logowanie
+$logEntry = date('Y-m-d H:i:s') . " - To: $to - Result: " . ($mailResult ? 'SUCCESS' : 'FAILURE') . "\n";
+file_put_contents('email_debug.txt', $logEntry, FILE_APPEND);
+
+if ($mailResult) {
     http_response_code(200);
     echo json_encode(["status" => "success", "message" => "Dziękujemy! Wiadomość została wysłana."]);
 } else {
     http_response_code(500);
-    echo json_encode(["status" => "error", "message" => "Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później."]);
+    echo json_encode(["status" => "error", "message" => "Serwer odrzucił wysyłkę. Sprawdź plik email_debug.txt."]);
 }
 ?>

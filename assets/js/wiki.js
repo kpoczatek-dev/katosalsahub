@@ -631,3 +631,17 @@ function fillForm(term) {
 function toggleLoading(show) {
     if(loading) loading.style.display = show ? 'flex' : 'none';
 }
+// Moderation Actions
+async function approveTerm(token) {
+    console.log("Approve clicked for token:", token);
+    if(!confirm("Czy na pewno chcesz zatwierdzić to hasło?")) return;
+    await processModeration(token, 'approve');
+}
+window.approveTerm = approveTerm;
+
+async function rejectTerm(token) {
+    console.log("Reject clicked for token:", token);
+    if(!confirm("Czy na pewno chcesz odrzucić to hasło?")) return;
+    await processModeration(token, 'reject');
+}
+window.rejectTerm = rejectTerm;
