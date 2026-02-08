@@ -311,7 +311,6 @@ async function fetchTerms() {
                     <h3>Błąd wczytywania danych</h3>
                     <p>${error.message}</p>
                     <button onclick="fetchTerms()" class="btn-verify" style="margin-top:10px">Spróbuj ponownie</button>
-                    <button onclick="debugFetch()" class="btn-text" style="margin-top:10px; font-size: 0.8rem;">Dla Developera: Debug</button>
                 </div>
             `;
         }
