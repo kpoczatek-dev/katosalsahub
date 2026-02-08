@@ -249,7 +249,7 @@ body {
 
 .wiki-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
@@ -382,17 +382,73 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+/* Responsive Wiki Improvements */
+@media (max-width: 968px) {
     .wiki-main-container {
         flex-direction: column;
     }
     
     .wiki-sidebar {
         width: 100%;
+        position: static; /* Unstick on mobile */
+        margin-bottom: 30px;
+    }
+
+    /* Horizontal Scroll for Categories on Mobile */
+    .category-list {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 15px; /* Space for scrollbar */
+        gap: 10px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .category-list li {
+        flex: 0 0 auto; /* Don't shrink */
+        white-space: nowrap;
+        background: rgba(255,255,255,0.05); /* Card-like bg */
+        margin-bottom: 0;
+        scroll-snap-align: start;
+    }
+
+    .category-list li.active {
+        background: var(--cuban-red);
     }
     
     .wiki-card {
         min-height: auto;
+    }
+
+    .wiki-header {
+        padding: 100px 15px 40px;
+        margin-top: -60px;
+    }
+
+    .wiki-header-content h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wiki-grid {
+        grid-template-columns: 1fr; /* Force single column on very small screens */
+    }
+
+    .wiki-header-content h1 {
+        font-size: 2rem;
+    }
+
+    .wiki-modal {
+        padding: 20px;
+        width: 95%;
+    }
+
+    .fab-add {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        bottom: 80px; /* Above footer/cookie banner */
     }
 }
 
