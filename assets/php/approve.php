@@ -110,11 +110,20 @@ if ($action === 'approve') {
     array_splice($pending, $entryIndex, 1);
     saveJSON($pendingFile, $pending);
 
-    echo "<h1 style='color: green;'>Zatwierdzono! ✅</h1><p>Baza zaktualizowana.</p>";
+    // Log Success
+    file_put_contents('approve_debug.log', date('Y-m-d H:i:s') . " - Action: $action - Token: $token - SUCCESS\n", FILE_APPEND);
+    echo json_encode(['status' => 'success', 'message' => 'Zatwierdzono! ✅ Baza zaktualizowana.']);
 
 } elseif ($action === 'reject') {
     array_splice($pending, $entryIndex, 1);
-    saveJSON($pendingFile, $pending);
-    echo "<h1 style='color: red;'>Odrzucono ❌</h1>";
+    
+    if (saveJSON($pendingFile, $pending)) {
+        file_put_contents('approve_debug.log', date('Y-m-d H:i:s') . " - Action: $action - Token: $token - SUCCESS\n", FILE_APPEND);
+        echo json_encode(['status' => 'success', 'message' => 'Odrzucono.']);
+    } else {
+        file_put_contents('approve_debug.log', date('Y-m-d H:i:s') . " - Action: $action - Token: $token - ERROR\n", FILE_APPEND);
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Błąd zapisu.']);
+    }
 }
 ?>

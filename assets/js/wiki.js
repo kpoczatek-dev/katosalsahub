@@ -319,9 +319,9 @@ async function fetchPendingTerms() {
     }
 
     console.log("Fetching pending terms..."); // Debug
-    if(loading) loading.style.display = 'flex';
-    grid.innerHTML = '';
-    // console.log("Fetching pending terms..."); // Debug
+    if(!grid || !loading) rebindElements();
+    if(!grid) return;
+
     if(loading) loading.style.display = 'flex';
     grid.innerHTML = '';
     
