@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salsopedia - Kato Salsa Hub</title>
+    <meta name="description"
+        content="Salsopedia - Encyklopedia wiedzy o salsie kubańskiej. Pojęcia, figury, muzyka, historia i kultura.">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Animowane tło -->
+    <div class="animated-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation (Identical to index.html) -->
+    <nav class="nav-bar">
+        <div class="nav-brand-group">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-text">KATO SALSA HUB</span>
+                <span class="logo-emoji">🔥</span>
+            </a>
+            <button id="header-radio-play" class="header-radio-btn" aria-label="Włącz radio">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+            </button>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#hero">Start</a>
+            <a href="index.html#onas">O nas</a>
+            <a href="index.html#style">Style</a>
+            <a href="salsopedia.html" class="active" style="color: var(--cuban-orange);">Salsopedia</a>
+            <a href="index.html#radio">Radio</a>
+            <a href="index.html#mapa">Lokacja</a>
+            <a href="index.html#kontakt" class="cta-link">Kontakt</a>
+        </div>
+        <div class="burger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper for SPA -->
+    <main id="app-content">
+
+        <!-- Salsopedia Header -->
+        <header class="wiki-header">
+            <div class="wiki-header-content">
+                <h1>Salsopedia</h1>
+                <p>Twoja encyklopedia wiedzy o salsie kubańskiej, muzyce i kulturze.</p>
+
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input"
+                        placeholder="Szukaj pojęcia (np. Vacilala, Timba)...">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="wiki-main-container">
+
+            <!-- Sidebar Navigation -->
+            <aside class="wiki-sidebar">
+                <h3>Kategorie</h3>
+                <ul class="category-list" id="categoryList">
+                    <li data-category="all" class="active">Wszystkie</li>
+                    <li data-category="steps">Kroki (Podstawy)</li>
+                    <li data-category="figures">Figury (Pary)</li>
+                    <li data-category="instruments">Instrumenty</li>
+                    <li data-category="music">Muzyka</li>
+                    <li data-category="dance">Taniec</li>
+                    <li data-category="styles">Style Tańca</li>
+                    <li data-category="history">Historia</li>
+                    <li data-category="gods">Bogowie (Orishas)</li>
+                    <li data-category="instructors">Instruktorzy</li>
+                    <li data-category="schools">Szkoły Tańca</li>
+                </ul>
+
+                <div class="sidebar-footer">
+                    <button id="showPendingBtn" class="btn-text">
+                        <i class="fas fa-history"></i> Oczekujące zmiany
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Terms Grid -->
+            <section class="wiki-content">
+                <!-- Loading Spinner -->
+                <div id="loading" class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+
+                <!-- TEMP DEBUG BUTTON -->
+                <div style="text-align:center; margin: 10px;">
+                    <button onclick="debugFetch()"
+                        style="background:red; color:white; padding:5px 10px; border:none; cursor:pointer; font-size:10px; opacity:0.7;">
+                        🐞 DEBUG DANYCH
+                    </button>
+                </div>
+
+                <!-- Terms Grid -->
+                <div id="wikiGrid" class="wiki-grid"></div>
+
+                <!-- No Results Message -->
+                <div id="noResults" class="no-results hidden">
+                    <i class="fas fa-search"></i>
+                    <p>Nie znaleziono takiego hasła.</p>
+                    <button class="btn-add-inline" onclick="openModal()">Dodaj je!</button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+
+    <!-- Floating Action Button -->
+    <button id="addTermBtn" class="fab-add" onclick="openModal()" title="Dodaj nowe hasło">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modal for Adding/Editing Terms -->
+    <div id="wikiModal" class="modal-overlay">
+        <div class="modal-content wiki-modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 id="modalTitle">Dodaj hasło</h2>
+
+            <form id="wikiForm">
+                <input type="hidden" id="termId" name="id">
+                <input type="hidden" id="isVerification" name="verification_request">
+
+                <div class="form-group">
+                    <label for="termInput">Hasło</label>
+                    <input type="text" id="termInput" name="term" required placeholder="np. Enchufla">
+                </div>
+
+                <div class="form-group">
+                    <label>Kategorie Główne</label>
+                    <!-- Custom Multi Select for Categories -->
+                    <select name="category" id="catSelect" multiple style="display:none">
+                        <option value="steps">Kroki</option>
+                        <option value="figures">Figury</option>
+                        <option value="music">Muzyka</option>
+                        <option value="dance">Taniec</option>
+                        <option value="history">Historia</option>
+                        <option value="instructors">Instruktorzy</option>
+                        <option value="schools">Szkoły</option>
+                        <option value="instruments">Instrumenty</option>
+                        <option value="gods">Bogowie</option>
+                        <option value="other">➕ INNE / DODAJ WŁASNĄ</option>
+                    </select>
+                    <div class="custom-select-container" id="catSelectContainer"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Podkategorie / Style (Opcjonalne)</label>
+                    <select name="subcategory" id="subSelect" multiple style="display:none">
+                        <option value="salsa">Salsa</option>
+                        <option value="timba">Timba</option>
+                        <option value="son">Son</option>
+                        <option value="rumba">Rumba</option>
+                        <option value="afro">Afro</option>
+                        <option value="bachata">Bachata</option>
+                        <option value="kizomba">Kizomba</option>
+                        <option value="reggaeton">Reggaeton</option>
+                        <option value="rueda">Rueda de Casino</option>
+                        <option value="casino">Casino (Pary)</option>
+                        <option value="lady_styling">Lady Styling</option>
+                        <option value="men_styling">Men Styling</option>
+                        <option value="percussion">Perkusjonalia</option>
+                        <option value="other">➕ INNE / DODAJ WŁASNĄ</option>
+                    </select>
+                    <div class="custom-select-container" id="subSelectContainer"></div>
+                </div>
+
+                <!-- Custom User Category Inputs (Initially Hidden) -->
+                <div id="customCategoryGroup" class="form-group hidden"
+                    style="background: rgba(255,165,2,0.1); padding: 10px; border-radius: 10px; border: 1px solid var(--cuban-orange);">
+                    <label>Zaproponuj nową kategorię/podkategorię:</label>
+                    <input type="text" id="userCategoryInput" name="user_category"
+                        placeholder="Np. Festiwale, Stroje...">
+                    <small>Wpisz tutaj, jeśli nie znalazłeś odpowiedniej kategorii powyżej.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="definitionInput">Definicja</label>
+                    <textarea id="definitionInput" name="definition" rows="5" required
+                        placeholder="Opisz to pojęcie..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Źródło wiedzy (opcjonalne)</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="sourceNameInput" name="source_name"
+                            placeholder="Nazwa (np. Rueda Standard)" style="flex: 1;">
+                        <input type="url" id="sourceLinkInput" name="source_link" placeholder="Link (URL)"
+                            style="flex: 1;">
+                    </div>
+                    <input type="hidden" id="sourceInput" name="source"> <!-- Combined value for backend -->
+                </div>
+
+                <div class="form-group auth-group">
+                    <div>
+                        <label for="authorInput">Twój Podpis (Nick)</label>
+                        <input type="text" id="authorInput" name="author" required placeholder="np. Salsero99">
+                    </div>
+                    <div>
+                        <label for="authorLinkInput">Twój Facebook (Link)</label>
+                        <input type="url" id="authorLinkInput" name="author_link"
+                            placeholder="https://facebook.com/twojprofil">
+                        <small>Opcjonalne, aby dodać ikonkę profilu.</small>
+                    </div>
+                </div>
+
+                <!-- Honeypot -->
+                <input type="text" name="surname" style="display:none">
+
+                <button type="submit" class="btn-submit">Wyślij do moderacji</button>
+            </form>
+            <div id="formMessage"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>KATO SALSA HUB 🔥</h3>
+                <p>Kubańska energia w sercu Śląska</p>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#hero">Start</a>
+                <a href="index.html#onas">O nas</a>
+                <a href="index.html#style">Style</a>
+                <a href="index.html#kontakt">Kontakt</a>
+                <a href="privacy.html">Polityka Prywatności</a>
+                <a href="https://dancepuls.katosalsahub.pl/" target="_blank">DancePuls Generator</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="rok"></span> Kato Salsa Hub. Stworzone przez <a href="https://twojastronawww.pl"
+                    target="_blank">TwojaStronaWWW</a></p>
+        </div>
+    </footer>
+
+
+    <script src="assets/js/contact.js"></script>
+    <script src="assets/js/cookies.js"></script>
+    <script src="assets/js/wiki.js"></script>
+    <script src="assets/js/radio.js"></script>
+    <script src="assets/js/home.js"></script>
+    <script src="assets/js/router.js"></script>
+    <script>
+        // Rok in footer
+        document.getElementById("rok").textContent = new Date().getFullYear();
+
+        // Burger menu logic (Adapted from index.html)
+        const burger = document.querySelector('.burger-menu');
+        const navLinks = document.querySelector('.nav-links');
+
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            burger.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salsopedia - Kato Salsa Hub</title>
+    <meta name="description"
+        content="Salsopedia - Encyklopedia wiedzy o salsie kubańskiej. Pojęcia, figury, muzyka, historia i kultura.">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Animated Background (from index.html) -->
+    <div class="animated-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation (Matched index.html structure EXACTLY) -->
+    <nav class="nav-bar"> <!-- Changed from .navbar to .nav-bar -->
+        <div class="nav-brand-group">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-text">KATO SALSA HUB</span>
+                <span class="logo-emoji">🔥</span>
+            </a>
+            <button id="header-radio-play" class="header-radio-btn" aria-label="Włącz radio">
+                <!-- SVG Icon from index.html -->
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="nav-links"> <!-- Changed from ul to div -->
+            <a href="index.html#hero">Start</a>
+            <a href="index.html#onas">O nas</a>
+            <a href="index.html#style">Style</a>
+            <a href="salsopedia.html" class="active" style="color: var(--cuban-orange);">Salsopedia</a>
+            <a href="index.html#radio">Radio</a>
+            <a href="index.html#mapa">Lokacja</a>
+            <a href="index.html#kontakt" class="cta-link">Kontakt</a>
+        </div>
+
+        <div class="burger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Salsopedia Header -->
+    <header class="wiki-header">
+        <div class="wiki-header-content">
+            <h1>Salsopedia</h1>
+            <p>Twoja encyklopedia wiedzy o salsie kubańskiej, muzyce i kulturze.</p>
+
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input"
+                    placeholder="Szukaj pojęcia (np. Vacilala, Timba)...">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="wiki-main-container">
+
+        <!-- Sidebar Navigation -->
+        <aside class="wiki-sidebar">
+            <h3>Kategorie</h3>
+            <ul class="category-list" id="categoryList">
+                <li data-category="all" class="active">Wszystkie</li>
+                <li data-category="steps">Kroki (Podstawy)</li>
+                <li data-category="figures">Figury (Pary)</li>
+                <li data-category="instruments">Instrumenty</li>
+                <li data-category="music">Muzyka</li>
+                <li data-category="dance">Taniec</li>
+                <li data-category="styles">Style Tańca</li>
+                <li data-category="history">Historia</li>
+                <li data-category="gods">Bogowie (Orishas)</li>
+                <li data-category="instructors">Instruktorzy</li>
+                <li data-category="schools">Szkoły Tańca</li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="showPendingBtn" class="btn-text">
+                    <i class="fas fa-history"></i> Oczekujące zmiany
+                </button>
+            </div>
+        </aside>
+
+        <!-- Terms Grid -->
+        <section class="wiki-content">
+            <!-- Loading Spinner -->
+            <div id="loading" class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+
+            <!-- TEMP DEBUG BUTTON -->
+            <div style="text-align:center; margin: 10px;">
+                <button onclick="debugFetch()"
+                    style="background:red; color:white; padding:5px 10px; border:none; cursor:pointer; font-size:10px; opacity:0.7;">
+                    🐞 DEBUG DANYCH
+                </button>
+            </div>
+
+            <!-- Terms Grid -->
+            <div id="wikiGrid" class="wiki-grid"></div>
+
+            <!-- No Results Message -->
+            <div id="noResults" class="no-results hidden">
+                <i class="fas fa-search"></i>
+                <p>Nie znaleziono takiego hasła.</p>
+                <button class="btn-add-inline" onclick="openModal()">Dodaj je!</button>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- Floating Action Button -->
+    <button id="addTermBtn" class="fab-add" onclick="openModal()" title="Dodaj nowe hasło">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modal for Adding/Editing Terms -->
+    <div id="wikiModal" class="modal-overlay">
+        <div class="modal-content wiki-modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 id="modalTitle">Dodaj hasło</h2>
+
+            <form id="wikiForm">
+                <input type="hidden" id="termId" name="id">
+                <input type="hidden" id="isVerification" name="verification_request">
+
+                <div class="form-group">
+                    <label for="termInput">Hasło</label>
+                    <input type="text" id="termInput" name="term" required placeholder="np. Enchufla">
+                </div>
+
+                <div class="form-group">
+                    <label>Kategorie Główne</label>
+                    <!-- Custom Multi Select for Categories -->
+                    <select name="category" id="catSelect" multiple style="display:none">
+                        <option value="steps">Kroki</option>
+                        <option value="figures">Figury</option>
+                        <option value="music">Muzyka</option>
+                        <option value="dance">Taniec</option>
+                        <option value="history">Historia</option>
+                        <option value="instructors">Instruktorzy</option>
+                        <option value="schools">Szkoły</option>
+                        <option value="instruments">Instrumenty</option>
+                        <option value="gods">Bogowie</option>
+                        <option value="other">➕ INNE / DODAJ WŁASNĄ</option>
+                    </select>
+                    <div class="custom-select-container" id="catSelectContainer"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Podkategorie / Style (Opcjonalne)</label>
+                    <select name="subcategory" id="subSelect" multiple style="display:none">
+                        <option value="salsa">Salsa</option>
+                        <option value="timba">Timba</option>
+                        <option value="son">Son</option>
+                        <option value="rumba">Rumba</option>
+                        <option value="afro">Afro</option>
+                        <option value="bachata">Bachata</option>
+                        <option value="kizomba">Kizomba</option>
+                        <option value="reggaeton">Reggaeton</option>
+                        <option value="rueda">Rueda de Casino</option>
+                        <option value="casino">Casino (Pary)</option>
+                        <option value="lady_styling">Lady Styling</option>
+                        <option value="men_styling">Men Styling</option>
+                        <option value="percussion">Perkusjonalia</option>
+                        <option value="other">➕ INNE / DODAJ WŁASNĄ</option>
+                    </select>
+                    <div class="custom-select-container" id="subSelectContainer"></div>
+                </div>
+
+                <!-- Custom User Category Inputs (Initially Hidden) -->
+                <div id="customCategoryGroup" class="form-group hidden"
+                    style="background: rgba(255,165,2,0.1); padding: 10px; border-radius: 10px; border: 1px solid var(--cuban-orange);">
+                    <label>Zaproponuj nową kategorię/podkategorię:</label>
+                    <input type="text" id="userCategoryInput" name="user_category"
+                        placeholder="Np. Festiwale, Stroje...">
+                    <small>Wpisz tutaj, jeśli nie znalazłeś odpowiedniej kategorii powyżej.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="definitionInput">Definicja</label>
+                    <textarea id="definitionInput" name="definition" rows="5" required
+                        placeholder="Opisz to pojęcie..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Źródło wiedzy (opcjonalne)</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="sourceNameInput" name="source_name"
+                            placeholder="Nazwa (np. Rueda Standard)" style="flex: 1;">
+                        <input type="url" id="sourceLinkInput" name="source_link" placeholder="Link (URL)"
+                            style="flex: 1;">
+                    </div>
+                    <input type="hidden" id="sourceInput" name="source"> <!-- Combined value for backend -->
+                </div>
+
+                <div class="form-group auth-group">
+                    <div>
+                        <label for="authorInput">Twój Podpis (Nick)</label>
+                        <input type="text" id="authorInput" name="author" required placeholder="np. Salsero99">
+                    </div>
+                    <div>
+                        <label for="authorLinkInput">Twój Facebook (Link)</label>
+                        <input type="url" id="authorLinkInput" name="author_link"
+                            placeholder="https://facebook.com/twojprofil">
+                        <small>Opcjonalne, aby dodać ikonkę profilu.</small>
+                    </div>
+                </div>
+
+                <!-- Honeypot -->
+                <input type="text" name="surname" style="display:none">
+
+                <button type="submit" class="btn-submit">Wyślij do moderacji</button>
+            </form>
+            <div id="formMessage"></div>
+        </div>
+    </div>
+
+    <!-- Footer (Matched index.html structure) -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>KATO SALSA HUB 🔥</h3>
+                <p>Kubańska energia w sercu Śląska</p>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#hero">Start</a>
+                <a href="index.html#onas">O nas</a>
+                <a href="index.html#style">Style</a>
+                <a href="index.html#kontakt">Kontakt</a>
+                <a href="privacy.html">Polityka Prywatności</a>
+                <a href="https://dancepuls.katosalsahub.pl/" target="_blank">DancePuls Generator</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="rok"></span> Kato Salsa Hub. Stworzone przez <a href="https://twojastronawww.pl"
+                    target="_blank">TwojaStronaWWW</a></p>
+        </div>
+    </footer>
+
+
+    <script src="assets/js/wiki.js"></script>
+    <script src="assets/js/radio.js"></script>
+    <script src="assets/js/home.js"></script>
+    <script src="assets/js/router.js"></script>
+    <script>
+        // Rok in footer
+        document.getElementById("rok").textContent = new Date().getFullYear();
+
+        // Burger menu logic (Adapted from index.html)
+        const burger = document.querySelector('.burger-menu');
+        const navLinks = document.querySelector('.nav-links'); // Changed selector to match div
+
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active'); // active class triggers display flex/block in mobile.css
+            burger.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

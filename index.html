@@ -24,14 +24,22 @@
 
   <!-- Sticky Navigation -->
   <nav class="nav-bar">
-    <a href="#" class="nav-logo">
-      <span class="logo-text">KATO SALSA HUB</span>
-      <span class="logo-emoji">🔥</span>
-    </a>
+    <div class="nav-brand-group">
+      <a href="#" class="nav-logo">
+        <span class="logo-text">KATO SALSA HUB</span>
+        <span class="logo-emoji">🔥</span>
+      </a>
+      <button id="header-radio-play" class="header-radio-btn" aria-label="Włącz radio">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </button>
+    </div>
     <div class="nav-links">
       <a href="#hero">Start</a>
       <a href="#onas">O nas</a>
       <a href="#style">Style</a>
+      <a href="salsopedia.html">Salsopedia</a>
       <a href="#radio">Radio</a>
       <a href="#mapa">Lokacja</a>
       <a href="#kontakt" class="cta-link">Kontakt</a>
@@ -43,33 +51,87 @@
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section id="hero" class="hero-section">
-    <div class="hero-content">
-      <div class="hero-badge">🌴 Kubańska Energia w Sercu Śląska 🌴</div>
-      <h1 class="hero-title">
-        <span class="title-line">Zatańcz</span>
-        <span class="title-line glow">z nami</span>
-        <span class="title-line">salsę</span>
-      </h1>
-      <p class="hero-subtitle">Odkryj magię kubańskich rytmów w Katowicach. Rueda, Casino, Timba - wszystko w jednym
-        miejscu! 💃🕺</p>
-      <div class="hero-buttons">
-        <a href="https://www.facebook.com/groups/519446499987373" target="_blank" class="btn btn-primary">
-          <span>Dołącz do grupy</span>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
-        </a>
-        <a href="#mapa" class="btn btn-secondary">Zobacz gdzie tańczymy</a>
+  <!-- Main Content Wrapper for SPA -->
+  <main id="app-content">
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">🌴 Kubańska Energia w Sercu Śląska 🌴</div>
+        <h1 class="hero-title">
+          <span class="title-line">Zatańcz</span>
+          <span class="title-line glow">z nami</span>
+          <span class="title-line">salsę</span>
+        </h1>
+        <p class="hero-subtitle">Odkryj magię kubańskich rytmów w Katowicach. Rueda, Casino, Timba - wszystko w jednym
+          miejscu! 💃🕺</p>
+        <div class="hero-buttons">
+          <a href="https://www.facebook.com/groups/519446499987373" target="_blank" class="btn btn-primary">
+            <span>Dołącz do grupy</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </a>
+          <a href="#mapa" class="btn btn-secondary">Zobacz gdzie tańczymy</a>
+        </div>
       </div>
+      <div class="hero-visual">
+        <div class="dancing-emoji">💃</div>
+        <div class="dancing-emoji delay-1">🕺</div>
+        <div class="dancing-emoji delay-2">🎺</div>
+      </div>
+    </section>
+
+    <!-- O nas Section -->
+    <section id="onas" class="section-onas">
+      <!-- ... content ... -->
+    </section>
+
+    <!-- Style Section -->
+    <section id="style" class="section-style">
+      <!-- ... content ... -->
+    </section>
+
+    <!-- Radio Section -->
+    <section id="radio" class="section-radio">
+      <!-- ... content ... -->
+    </section>
+
+    <!-- Mapa Section -->
+    <section id="mapa" class="section-mapa">
+      <!-- ... content ... -->
+    </section>
+
+    <!-- Kontakt Section -->
+    <section id="kontakt" class="section-kontakt">
+      <!-- ... content ... -->
+    </section>
+  </main>
+  <div class="hero-content">
+    <div class="hero-badge">🌴 Kubańska Energia w Sercu Śląska 🌴</div>
+    <h1 class="hero-title">
+      <span class="title-line">Zatańcz</span>
+      <span class="title-line glow">z nami</span>
+      <span class="title-line">salsę</span>
+    </h1>
+    <p class="hero-subtitle">Odkryj magię kubańskich rytmów w Katowicach. Rueda, Casino, Timba - wszystko w jednym
+      miejscu! 💃🕺</p>
+    <div class="hero-buttons">
+      <a href="https://www.facebook.com/groups/519446499987373" target="_blank" class="btn btn-primary">
+        <span>Dołącz do grupy</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+      <a href="#mapa" class="btn btn-secondary">Zobacz gdzie tańczymy</a>
     </div>
-    <div class="hero-visual">
-      <div class="dancing-emoji">💃</div>
-      <div class="dancing-emoji delay-1">🕺</div>
-      <div class="dancing-emoji delay-2">🎺</div>
-    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="dancing-emoji">💃</div>
+    <div class="dancing-emoji delay-1">🕺</div>
+    <div class="dancing-emoji delay-2">🎺</div>
+  </div>
   </section>
 
   <!-- O nas Section -->
@@ -305,61 +367,9 @@
       });
     });
 
-    // Radio play button logic
-    let radioAudio = null;
-    let isPlaying = false;
-
-    document.getElementById('radio-play').addEventListener('click', function () {
-      const btn = this;
-
-      if (!radioAudio) {
-        radioAudio = new Audio('https://stream.zeno.fm/g0zpm0pypuhvv');
-      }
-
-      if (!isPlaying) {
-        // Pokaż stan ładowania
-        btn.textContent = "⏳ Łączenie...";
-
-        // Start playing
-        radioAudio.play().then(() => {
-          isPlaying = true;
-          btn.textContent = "⏹ Wyłącz radio";
-          btn.classList.add('playing');
-
-          // Start animations
-          const vinyl = document.querySelector('.vinyl-disc');
-          if (vinyl) vinyl.style.animationPlayState = 'running';
-
-          const waves = document.querySelectorAll('.sound-wave span');
-          waves.forEach(wave => {
-            wave.style.animationPlayState = 'running';
-          });
-        }).catch(error => {
-          console.error("Błąd odtwarzania:", error);
-          btn.textContent = "Błąd odtwarzania 😞";
-          isPlaying = false; // Reset state on error
-        });
-      } else {
-        // Stop playing
-        radioAudio.pause();
-
-        isPlaying = false;
-        btn.textContent = "▶ Włącz radio";
-        btn.classList.remove('playing');
-
-        // Pause animations
-        const vinyl = document.querySelector('.vinyl-disc');
-        if (vinyl) vinyl.style.animationPlayState = 'paused';
-
-        const waves = document.querySelectorAll('.sound-wave span');
-        waves.forEach(wave => {
-          wave.style.animationPlayState = 'paused';
-        });
-      }
-    });
-
     // Vinyl animation on scroll removed to prevent conflict with play state
   </script>
+  <script src="assets/js/radio.js"></script>
 </body>
 
 <!-- test -->

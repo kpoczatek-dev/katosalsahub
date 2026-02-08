@@ -104,6 +104,12 @@ body {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.nav-brand-group {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
 .nav-logo {
 	font-family: 'Bebas Neue', sans-serif;
 	font-size: 1.8rem;
@@ -136,6 +142,593 @@ body {
 		transform: scale(1.2);
 	}
 }
+
+/* --- Salsopedia (Wiki) V7 Styles --- */
+
+.wiki-header {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('../../assets/images/hero-bg.jpg'); /* Verify asset path */
+    background-size: cover;
+    background-position: center;
+    padding: 140px 20px 80px; /* Increased padding to clear navbar */
+    text-align: center;
+    margin-top: -80px; /* Pull up behind navbar if transparent header logic allows, else adjust */
+}
+
+/* Ensure padding so header content doesn't collide with nav */
+.wiki-header-content {
+    margin-top: 40px;
+}
+
+.wiki-header-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, var(--cuban-orange), var(--cuban-red));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.wiki-main-container {
+    display: flex;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 40px;
+}
+
+/* Sidebar */
+.wiki-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: rgba(40, 40, 40, 0.95); /* Darker solid background for better readability */
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: fit-content;
+    position: sticky;
+    top: 100px; /* Sticky sidebar */
+}
+
+.wiki-sidebar h3 {
+    margin-bottom: 20px;
+    color: var(--cuban-yellow);
+    font-size: 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+}
+
+.category-list li {
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s;
+    color: rgba(255,255,255,0.8);
+}
+
+.category-list li:hover,
+.category-list li.active {
+    background: var(--cuban-red);
+    color: white;
+}
+
+.sidebar-footer {
+    margin-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: var(--cuban-orange);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
+
+/* Content Area */
+.wiki-content {
+    flex-grow: 1;
+}
+
+.wiki-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.wiki-card {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.3s, border-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    min-height: 250px; /* Prevent cards from collapsing */
+    position: relative; /* Context for absolute el if needed */
+}
+
+.wiki-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--cuban-yellow);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.wiki-card.unverified {
+    border-left: 4px solid var(--cuban-yellow);
+}
+
+.wiki-card-header h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.status-bar {
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.status-verified { color: #10b981; font-weight: bold; }
+.status-unverified { color: var(--cuban-yellow); font-weight: bold; }
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.cat-badge {
+    font-size: 0.75rem;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: rgba(255,255,255,0.7);
+}
+
+.wiki-card .definition {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 20px;
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+.source-link {
+    font-size: 0.8rem;
+    color: var(--cuban-orange); /* Highlight source link */
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.wiki-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: auto; /* Push to bottom */
+}
+
+/* Buttons Fix */
+.btn-edit {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.btn-edit:hover { background: rgba(255,255,255,0.1); }
+
+.btn-verify, .btn-edit, .btn-submit {
+    cursor: pointer;
+    position: relative;
+    z-index: 10; /* Ensure clickable */
+}
+
+.btn-verify {
+    background: rgba(255, 204, 0, 0.1);
+    border: 1px solid var(--cuban-yellow);
+    color: var(--cuban-yellow);
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.btn-verify:hover {
+    background: var(--cuban-yellow);
+    color: black;
+}
+
+
+/* Modal Form Styles */
+.categories-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.categories-checkbox-grid label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wiki-main-container {
+        flex-direction: column;
+    }
+    
+    .wiki-sidebar {
+        width: 100%;
+    }
+    
+    .wiki-card {
+        min-height: auto;
+    }
+}
+
+/* Modal Form Improvements v8 */
+.auth-group {
+    display: flex;
+    gap: 15px;
+}
+
+.auth-group > div {
+    flex: 1;
+}
+
+/* Custom Select Styles */
+.custom-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.select-trigger {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 15px;
+    min-height: 45px;
+    cursor: pointer;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    position: relative;
+}
+
+.select-trigger::after {
+    content: '▼';
+    font-size: 0.8rem;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.5);
+}
+
+.select-trigger:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #2a2a2a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-top: 5px;
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.select-options.open {
+    display: block;
+    animation: fadeInDown 0.2s ease-out;
+}
+
+.option-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.8);
+}
+
+.option-item:hover {
+    background: rgba(255,255,255,0.05);
+    color: white;
+}
+
+.option-item.selected {
+    background: rgba(255, 165, 2, 0.1);
+    color: var(--cuban-orange);
+}
+
+.option-item .check-icon {
+    width: 16px;
+    height: 16px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+}
+
+.option-item.selected .check-icon {
+    background: var(--cuban-orange);
+    border-color: var(--cuban-orange);
+    color: black;
+}
+
+.selected-tag {
+    background: linear-gradient(135deg, var(--cuban-orange), var(--cuban-red));
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tag-remove {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.tag-remove:hover {
+    color: black;
+}
+
+/* Submit Button Styling */
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, var(--cuban-orange), var(--cuban-red));
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 71, 87, 0.5);
+}
+
+/* Category Badges Styling */
+.cat-badge.main-cat {
+    background: rgba(255, 165, 2, 0.15);
+    color: var(--cuban-orange);
+    border: 1px solid rgba(255, 165, 2, 0.3);
+}
+
+.cat-badge.sub-cat {
+    background: rgba(55, 66, 250, 0.15);
+    color: #5f7fff;
+    border: 1px solid rgba(55, 66, 250, 0.3);
+}
+
+/* Modal Z-Index & Positioning Fix */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 10001; /* Above navbar (1000) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.wiki-modal {
+    background: var(--dark-card);
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.open .wiki-modal {
+    transform: translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: var(--cuban-red);
+}
+
+.wiki-modal h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--cuban-orange), var(--cuban-red));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.footer {
+    background: #000;
+    padding: 2rem 0;
+    margin-top: 40px;
+    border-top: 1px solid #333;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-links a {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: var(--cuban-orange);
+}
+
+/* Styles for Footer Brand/Social handled by global CSS, just ensuring layout */
+
+
+/* Header Radio Button */
+.header-radio-btn {
+	background: transparent;
+	border: 2px solid var(--cuban-red);
+	color: var(--cuban-red);
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	margin-left: 15px;
+	transition: all 0.3s ease;
+	padding: 0;
+}
+
+.header-radio-btn:hover {
+	background: var(--cuban-red);
+	color: white;
+	transform: scale(1.1);
+	box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+}
+
+.header-radio-btn.playing {
+	background: var(--cuban-orange);
+	border-color: var(--cuban-orange);
+	color: white;
+	animation: pulse-radio 2s infinite;
+}
+
+@keyframes pulse-radio {
+	0% {
+		box-shadow: 0 0 0 0 rgba(255, 165, 2, 0.7);
+	}
+	70% {
+		box-shadow: 0 0 0 10px rgba(255, 165, 2, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(255, 165, 2, 0);
+	}
+}
+
+/* Spinner Animation */
+.spinner {
+	animation: rotate 2s linear infinite;
+	width: 24px;
+	height: 24px;
+}
+
+.spinner .path {
+	stroke: currentColor;
+	stroke-linecap: round;
+	animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes dash {
+	0% {
+		stroke-dasharray: 1, 150;
+		stroke-dashoffset: 0;
+	}
+	50% {
+		stroke-dasharray: 90, 150;
+		stroke-dashoffset: -35;
+	}
+	100% {
+		stroke-dasharray: 90, 150;
+		stroke-dashoffset: -124;
+	}
+}
+
 
 .nav-links {
 	display: flex;
@@ -349,6 +942,121 @@ body {
 	}
 	75% {
 		transform: translateY(-30px) rotate(10deg);
+	}
+}
+
+/* =========================================
+   RESPONSIVE DESIGN (Mobile First / Merged)
+   ========================================= */
+
+@media (max-width: 968px) {
+	.nav-links {
+		position: fixed;
+		top: 80px;
+		right: -100%;
+		flex-direction: column;
+		background: rgba(10, 10, 10, 0.95);
+		backdrop-filter: blur(20px);
+		width: 100%;
+		padding: 40px 5%;
+		gap: 20px;
+		transition: right 0.3s;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.nav-links.active {
+		right: 0;
+	}
+
+	.burger-menu {
+		display: flex;
+	}
+
+	.burger-menu.active span:nth-child(1) {
+		transform: rotate(45deg) translate(8px, 8px);
+	}
+
+	.burger-menu.active span:nth-child(2) {
+		opacity: 0;
+	}
+
+	.burger-menu.active span:nth-child(3) {
+		transform: rotate(-45deg) translate(8px, -8px);
+	}
+
+	.hero-section {
+		flex-direction: column;
+		text-align: center;
+		padding-top: 100px;
+	}
+
+	.hero-buttons {
+		justify-content: center;
+	}
+
+	.hero-visual {
+		min-height: 300px;
+	}
+
+	.radio-wrapper {
+		grid-template-columns: 1fr;
+		padding: 40px;
+	}
+
+	.kontakt-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.footer-content {
+		flex-direction: column;
+		text-align: center;
+	}
+
+	.footer-links {
+		justify-content: center;
+	}
+}
+
+@media (max-width: 600px) {
+	.hero-title {
+		font-size: 3rem;
+	}
+
+	.section-title {
+		font-size: 2rem;
+	}
+
+	.onas-grid,
+	.style-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.vinyl-disc {
+		width: 180px;
+		height: 180px;
+	}
+
+	/* Fix for overlapping dancing emojis on mobile */
+	.dancing-emoji {
+		font-size: 70px !important;
+		/* Center the main one */
+		left: 50% !important;
+		transform: translateX(-50%) !important;
+	}
+
+	.dancing-emoji.delay-1 {
+		font-size: 55px !important;
+		left: 5% !important; /* Force to left side */
+		transform: none !important; /* Reset center transform if inherited */
+		top: 40px;
+	}
+
+	.dancing-emoji.delay-2 {
+		font-size: 45px !important;
+		left: auto !important; /* Reset left */
+		right: 5% !important; /* Force to right side */
+		transform: none !important;
+		bottom: 40px;
 	}
 }
 
@@ -939,5 +1647,149 @@ body {
     }
     .cookie-banner.active {
         bottom: 10px;
+    }
+}
+
+/* Cross-Linking Styles */
+.wiki-cross-link {
+    color: var(--cuban-orange);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.wiki-cross-link:hover {
+    color: var(--cuban-red);
+    text-decoration-color: var(--cuban-red);
+}
+
+/* Highlight Animation for Jump-To-Term */
+@keyframes highlightFlash {
+    0% { background-color: rgba(255, 165, 2, 0.3); border-color: var(--cuban-orange); transform: scale(1.02); }
+    100% { background-color: transparent; border-color: rgba(255,255,255,0.1); transform: scale(1); }
+}
+
+.highlight-flash {
+    animation: highlightFlash 1.5s ease-out;
+}
+
+/* Search Container & Input Styling */
+.search-container {
+    position: relative;
+    max-width: 600px;
+    margin: 20px auto 0;
+}
+
+.search-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 15px 25px 15px 50px; /* Left padding for icon */
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.search-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--cuban-orange);
+    outline: none;
+    box-shadow: 0 0 15px rgba(255, 165, 2, 0.3);
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.2rem;
+    pointer-events: none;
+}
+
+/* No Results Styling */
+.no-results {
+    text-align: center;
+    padding: 50px 20px;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    margin-top: 30px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--cuban-orange);
+    opacity: 0.8;
+}
+
+.no-results p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.btn-add-inline {
+    background: transparent;
+    border: 2px solid var(--cuban-orange);
+    color: var(--cuban-orange);
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.btn-add-inline:hover {
+    background: var(--cuban-orange);
+    color: black;
+    transform: scale(1.05);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Floating Action Button (FAB) */
+.fab-add {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--cuban-red), var(--cuban-orange));
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fab-add:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6);
+}
+
+@media (max-width: 768px) {
+    .fab-add {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
     }
 }
