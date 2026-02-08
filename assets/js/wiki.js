@@ -59,6 +59,13 @@ function rebindElements() {
     if(document.getElementById('subSelect')) {
         initCustomSelect('subSelect', 'subSelectContainer', 'Wybierz podkategorie...');
     }
+
+    // Re-attach Pending Changes Button
+    const pendingBtn = document.getElementById('showPendingBtn');
+    if(pendingBtn) {
+        pendingBtn.removeEventListener('click', fetchPendingTerms);
+        pendingBtn.addEventListener('click', fetchPendingTerms);
+    }
 }
 
 let activeSelects = {}; // Store instances to update them later
@@ -256,15 +263,58 @@ async function fetchTerms() {
     if(!grid) return; // Safety check
     grid.innerHTML = '';
     if(loading) loading.style.display = 'flex';
+
+    // Check for "file:" protocol (PHP won't run)
+    if (window.location.protocol === 'file:') {
+        if(loading) loading.style.display = 'none';
+        grid.innerHTML = `
+            <div class="no-results" style="display:block; border: 1px solid var(--cuban-red); padding: 20px; text-align: center;">
+                <i class="fas fa-server" style="color:var(--cuban-red); font-size: 2rem; margin-bottom: 10px;"></i>
+                <h3 style="color:var(--cuban-red)">Wymagany serwer lokalny (PHP)</h3>
+                <p>Uruchamiasz stronę bezpośrednio z dysku (<code>file://</code>).</p>
+                <p>Baza danych Salsopedii i formularze wymagają PHP.</p>
+                <p>Uruchom stronę przez <strong>XAMPP</strong>, <strong>Laragon</strong> lub rozszerzenie <strong>PHP Server</strong> w VS Code.</p>
+            </div>
+        `;
+        return;
+    }
+
     try {
         const response = await fetch(API_URL);
-        const data = await response.json();
-        allTerms = data;
-        renderTerms(allTerms);
+        
+        // Handle non-OK responses
+        if (!response.ok) {
+            throw new Error(`Server Error: ${response.status} ${response.statusText}`);
+        }
+
+        const text = await response.text();
+        
+        // Validate JSON before parsing
+        try {
+            const data = JSON.parse(text);
+            allTerms = data;
+            renderTerms(allTerms);
+        } catch (e) {
+            console.error('Invalid JSON received:', text.substring(0, 100)); // Log first 100 chars
+            throw new Error('Otrzymano niepoprawne dane z serwera (może to być błąd PHP lub HTML). Sprawdź konsolę.');
+        }
+
         if(loading) loading.style.display = 'none';
+        
     } catch (error) {
         console.error('Error fetching terms:', error);
-        if(loading) loading.innerHTML = '<p>Błąd pobierania danych.</p>';
+        if(loading) {
+            loading.style.display = 'none';
+            grid.innerHTML = `
+                <div class="no-results" style="display:block; color: var(--cuban-red);">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>Błąd wczytywania danych</h3>
+                    <p>${error.message}</p>
+                    <button onclick="fetchTerms()" class="btn-verify" style="margin-top:10px">Spróbuj ponownie</button>
+                    <button onclick="debugFetch()" class="btn-text" style="margin-top:10px; font-size: 0.8rem;">Dla Developera: Debug</button>
+                </div>
+            `;
+        }
     }
 }
 
@@ -274,9 +324,17 @@ async function fetchPendingTerms() {
     grid.innerHTML = '';
     
     try {
-        const response = await fetch(`${API_URL}?action=pending`);
+        const response = await fetch(`${API_URL}?action=pending`, { cache: "no-store" });
         const data = await response.json();
-        renderTerms(data, true); // true = rendering pending mode
+        
+        // Polyfill ID for rendering
+        const pendingTerms = data.map(t => ({
+            ...t,
+            id: t.original_id || t.token, // Use original ID if edit, else token
+            isPending: true
+        }));
+
+        renderTerms(pendingTerms, true); // true = rendering pending mode
         if(loading) loading.style.display = 'none';
         
         // Update Active Category UI
@@ -370,8 +428,9 @@ function renderTerms(terms, isPendingMode = false) {
                  const regex = new RegExp(`\\b${escapeRegExp(linkTerm.term)}\\b`, 'gi');
                  if (regex.test(definitionHtml)) {
                      // Replace with a link
+                     // Use javascript:void(0) to prevent router from intercepting or scrolling to top
                      definitionHtml = definitionHtml.replace(regex, (match) => {
-                         return `<a href="#" class="wiki-cross-link" onclick="scrollToTerm('${linkTerm.id}'); return false;">${match}</a>`;
+                         return `<a href="javascript:void(0)" class="wiki-cross-link" onclick="scrollToTerm('${linkTerm.id}')">${match}</a>`;
                      });
                  }
              });
@@ -383,6 +442,53 @@ function renderTerms(terms, isPendingMode = false) {
             authorHtml += ` <a href="${term.author_link}" target="_blank" title="Profil autora" style="color:var(--cuban-blue);margin-left:5px;"><i class="fab fa-facebook"></i></a>`;
         }
 
+        // Multi-Source Rendering
+        let sourceHtml = '';
+        if (term.source) {
+            let sources = [];
+            if (Array.isArray(term.source)) {
+                sources = term.source;
+            } else {
+                 if(typeof term.source === 'string') {
+                    const match = term.source.match(/^(.*)\s\((https?:\/\/.*)\)$/);
+                    if(match) sources.push({name: match[1], url: match[2]});
+                    else sources.push({name: term.source, url: ''});
+                 }
+            }
+            sources = sources.filter(s => s.name || s.url);
+            if(sources.length > 0) {
+                sourceHtml = `<div class="source-link"><i class="fas fa-book"></i> Źródła: `;
+                const links = sources.map(s => {
+                    const name = s.name || s.url || 'Link';
+                    if(s.url && s.url.startsWith('http')) {
+                        return `<a href="${s.url}" target="_blank">${name}</a>`;
+                    } else {
+                        return name;
+                    }
+                });
+                sourceHtml += links.join(', ') + `</div>`;
+            }
+        }
+
+        // Diff View for Pending Changes
+        let diffHtml = '';
+        if (isPendingMode && term.original_id) {
+            const original = allTerms.find(t => t.id === term.original_id);
+            if (original) {
+                diffHtml = `<div class="diff-view" style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-left: 3px solid var(--cuban-orange); font-size: 0.9em;">
+                    <strong style="color: var(--cuban-orange)">Porównanie ze starą wersją:</strong><br>
+                    ${original.term !== term.term ? `<div><strong>Hasło:</strong> <span style="text-decoration: line-through; opacity: 0.7">${original.term}</span> -> <span style="color:lightgreen">${term.term}</span></div>` : ''}
+                    ${original.definition !== term.definition ? `<div><strong>Definicja:</strong> <br><span style="text-decoration: line-through; opacity: 0.6">${original.definition}</span> <br> <span style="color:lightgreen">${term.definition}</span></div>` : ''}
+                    ${JSON.stringify(original.source) !== JSON.stringify(term.source) ? `<div><strong>Źródła:</strong> Zmienione</div>` : ''}
+                    ${original.author !== term.author ? `<div><strong>Autor zmiany:</strong> ${term.author} (Oryginał: ${original.author})</div>` : ''}
+                </div>`;
+            } else {
+                diffHtml = `<div class="diff-view"><small>Nie znaleziono oryginału (być może usunięty?).</small></div>`;
+            }
+        } else if (isPendingMode) {
+             diffHtml = `<div class="diff-view" style="color: lightgreen;"><small>✨ Nowe hasło</small></div>`;
+        }
+
         card.innerHTML = `
             <div class="wiki-card-header">
                 <h3>${term.term}</h3>
@@ -390,9 +496,11 @@ function renderTerms(terms, isPendingMode = false) {
             </div>
             <div class="status-bar">${statusHtml}</div>
             
-            <p class="definition">${definitionHtml}</p>
+            ${diffHtml}
+
+            ${!diffHtml ? `<p class="definition">${definitionHtml}</p>` : (isPendingMode ? `<p class="definition" style="border-left:2px solid lightgreen; padding-left:10px">${definitionHtml}</p>` : `<p class="definition">${definitionHtml}</p>`)}
             
-            ${term.source ? `<div class="source-link"><i class="fas fa-book"></i> Źródło: ${term.source}</div>` : ''}
+            ${sourceHtml}
             
             <div class="wiki-card-footer">
                 <span class="author">${authorHtml}</span>
@@ -409,18 +517,44 @@ function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Scroll To Term
+// Scroll To Term w/ Filter Reset
 function scrollToTerm(id) {
-    const card = document.getElementById(`card-${id}`);
-    if (card) {
+    console.log('Scrolling to:', id);
+    let card = document.getElementById(`card-${id}`);
+
+    if (!card) {
+        console.log('Card not found locally, resetting filters...');
+        
+        // 1. Reset Selects/Categories
+        currentCategory = 'all';
+        // Reset UI active classes
+        document.querySelectorAll('.category-list li').forEach(li => li.classList.remove('active'));
+        const allLi = document.querySelector('.category-list li[data-category="all"]');
+        if(allLi) allLi.classList.add('active');
+
+        // 2. Reset Search
+        if(searchInput) searchInput.value = '';
+
+        // 3. Re-render ALL terms
+        renderTerms(allTerms);
+
+        // 4. Try finding card again after render (small delay)
+        setTimeout(() => {
+            card = document.getElementById(`card-${id}`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.classList.add('highlight-flash');
+                setTimeout(() => card.classList.remove('highlight-flash'), 2000);
+            } else {
+                console.warn('Term still not found:', id);
+                alert('Nie znaleziono hasła (może zostało usunięte?).');
+            }
+        }, 50); 
+    } else {
+        // Card is visible
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         card.classList.add('highlight-flash');
         setTimeout(() => card.classList.remove('highlight-flash'), 2000);
-    } else {
-        // Maybe it's filtered out? Reset filter and search (optional, or just alert)
-        // Check if category is active? 
-        // For simplicity:
-        alert('Hasło znajduje się w innej kategorii lub jest ukryte.');
     }
 }
 window.scrollToTerm = scrollToTerm;
@@ -488,36 +622,31 @@ function fillForm(term) {
     document.getElementById('termId').value = term.id;
     document.getElementById('termInput').value = term.term;
     document.getElementById('definitionInput').value = term.definition;
-    document.getElementById('sourceInput').value = term.source || '';
     document.getElementById('authorInput').value = ''; // Reset author for new submission/verification
     document.getElementById('authorLinkInput').value = ''; 
 
-    // Source Split
-    const sourceNameInput = document.getElementById('sourceNameInput');
-    const sourceLinkInput = document.getElementById('sourceLinkInput');
+    // Multi-Source Fill
+    const sourceContainer = document.getElementById('sourceContainer');
+    sourceContainer.innerHTML = ''; // Clear
     
-    if (term.source) {
-        // Try to extract URL from format "Name (URL)"
-        const match = term.source.match(/^(.*)\s\((https?:\/\/.*)\)$/);
-        if (match) {
-            sourceNameInput.value = match[1];
-            sourceLinkInput.value = match[2];
+    let sources = [];
+    if(term.source) {
+         if (Array.isArray(term.source)) {
+            sources = term.source;
         } else {
-            // Just text or just URL
-            if (term.source.startsWith('http')) {
-                sourceNameInput.value = '';
-                sourceLinkInput.value = term.source;
-            } else {
-                sourceNameInput.value = term.source;
-                sourceLinkInput.value = '';
-            }
+             // Legacy
+             const match = term.source.match(/^(.*)\s\((https?:\/\/.*)\)$/);
+             if(match) sources.push({name: match[1], url: match[2]});
+             else sources.push({name: term.source, url: term.source.startsWith('http') ? term.source : ''});
         }
-    } else {
-        sourceNameInput.value = '';
-        sourceLinkInput.value = '';
     }
+    
+    // If empty, add one empty row
+    if(sources.length === 0) sources.push({name:'', url:''});
+    
+    sources.forEach(s => addSourceRow(s.name, s.url));
 
-    // Checkboxes (Categories) -> Now Select
+    // Categories (Select)
     const catSelect = document.getElementById('catSelect');
     if(catSelect) {
         Array.from(catSelect.options).forEach(opt => opt.selected = false); // Reset
@@ -530,39 +659,6 @@ function fillForm(term) {
         if(activeSelects['catSelect']) activeSelects['catSelect'].update();
     }
 // ... (rest of function)
-}
-
-async function handleFormSubmit(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(form);
-    
-    // Combine Source
-    const sourceName = document.getElementById('sourceNameInput').value.trim();
-    const sourceLink = document.getElementById('sourceLinkInput').value.trim();
-    let finalSource = sourceName;
-    if (sourceLink) {
-        finalSource = sourceName ? `${sourceName} (${sourceLink})` : sourceLink;
-    }
-
-    // Read from Selects (Hidden)
-// ...
-    const data = {
-        id: formData.get('id'),
-        term: formData.get('term'),
-        definition: formData.get('definition'),
-        author: formData.get('author'),
-        author_link: formData.get('author_link'),
-        surname: formData.get('surname'), // honeypot
-        category: categories,
-        subcategory: subcategories,
-        user_category: document.getElementById('userCategoryInput').value,
-        source: finalSource, // Use Combined Source
-        verification_request: formData.get('verification_request') ? true : false
-    };
-// ...
-}
-
     // Subcategories (Select)
     const subSelect = document.getElementById('subSelect');
     if(subSelect) {
@@ -574,6 +670,92 @@ async function handleFormSubmit(e) {
         });
         // Update UI
         if(activeSelects['subSelect']) activeSelects['subSelect'].update();
+    }
+}
+
+function addSourceRow(name = '', url = '') {
+    const div = document.createElement('div');
+    div.className = 'source-row';
+    div.innerHTML = `
+        <input type="text" name="source_name[]" placeholder="Nazwa źródła (np. YouTube)" value="${name}" style="flex:1">
+        <input type="url" name="source_url[]" placeholder="Link (URL)" value="${url}" style="flex:2">
+        <button type="button" class="btn-remove-source" onclick="this.parentElement.remove()">&times;</button>
+    `;
+    document.getElementById('sourceContainer').appendChild(div);
+}
+window.addSourceRow = addSourceRow;
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    
+    // Collect Sources
+    const sourceNames = formData.getAll('source_name[]');
+    const sourceUrls = formData.getAll('source_url[]');
+    const sources = [];
+    
+    for(let i=0; i<sourceNames.length; i++) {
+        if(sourceNames[i].trim() || sourceUrls[i].trim()) {
+            sources.push({
+                name: sourceNames[i].trim(),
+                url: sourceUrls[i].trim()
+            });
+        }
+    }
+
+    // Read from Selects (Hidden)
+    const categories = [];
+    document.querySelectorAll('input[name="category"]:checked').forEach(cb => {
+        categories.push(cb.value);
+    });
+    
+    // Also check Select if custom logic used (redundant if select syncs to checkboxes, but here we used select directly)
+    // The previous code had specific logic for this. Restoring it based on context implies we just rely on form data if selects update hidden inputs? 
+    // Wait, the custom select updates the <select> element options 'selected' attribute.
+    // FormData *should* capture multi-select values if name="category".
+    // Let's ensure we capture them correctly.
+
+    const catSelect = document.getElementById('catSelect');
+    const selectedCats = catSelect ? Array.from(catSelect.selectedOptions).map(o => o.value) : [];
+    
+    const subSelect = document.getElementById('subSelect');
+    const selectedSubs = subSelect ? Array.from(subSelect.selectedOptions).map(o => o.value) : [];
+
+    const data = {
+        id: formData.get('id'),
+        term: formData.get('term'),
+        definition: formData.get('definition'),
+        author: formData.get('author'),
+        author_link: formData.get('author_link'),
+        surname: formData.get('surname'), // honeypot
+        category: selectedCats.length > 0 ? selectedCats : ['dance'],
+        subcategory: selectedSubs,
+        user_category: document.getElementById('userCategoryInput').value,
+        source: sources, // Submit Array!
+        verification_request: formData.get('verification_request') ? true : false
+    };
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('formMessage').innerHTML = `<p style="color: green;">${result.message}</p>`;
+            setTimeout(() => {
+                closeModal();
+                fetchTerms(); // Refresh
+            }, 2000);
+        } else {
+            document.getElementById('formMessage').innerHTML = `<p style="color: red;">${result.error}</p>`;
+        }
+    } catch (error) {
+        console.error('Error submitting:', error);
     }
 }
 

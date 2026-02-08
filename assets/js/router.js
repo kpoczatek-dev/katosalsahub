@@ -85,20 +85,46 @@ async function loadPage(url) {
         
         // Re-initialize Scripts
         if (url.includes('salsopedia.html')) {
+            // Function to run wiki init
+            const runWiki = () => {
+                if (typeof window.initWiki === 'function') {
+                    window.initWiki();
+                } else {
+                    console.error('initWiki still not found after loading!');
+                }
+            };
+
             if (typeof window.initWiki === 'function') {
-                window.initWiki();
+                runWiki();
             } else {
                 console.log('initWiki not found, loading wiki.js...');
-                await loadScript('assets/js/wiki.js');
-                if (typeof window.initWiki === 'function') window.initWiki();
+                try {
+                    await loadScript('assets/js/wiki.js');
+                    runWiki();
+                } catch (e) {
+                     console.error('Failed to load wiki.js', e);
+                }
             }
         } else {
+             // Function to run home init
+            const runHome = () => {
+                if (typeof window.initHome === 'function') {
+                    window.initHome();
+                } else {
+                     console.error('initHome still not found after loading!');
+                }
+            };
+
             if (typeof window.initHome === 'function') {
-                window.initHome();
+                runHome();
             } else {
                 console.log('initHome not found, loading home.js...');
-                await loadScript('assets/js/home.js');
-                if (typeof window.initHome === 'function') window.initHome();
+                 try {
+                    await loadScript('assets/js/home.js');
+                    runHome();
+                } catch (e) {
+                     console.error('Failed to load home.js', e);
+                }
             }
         }
 
@@ -111,6 +137,11 @@ async function loadPage(url) {
             }, 100); 
         } else {
             window.scrollTo(0, 0);
+        }
+
+        // Re-init Radio (Always, as buttons might be re-rendered)
+        if (typeof window.initRadio === 'function') {
+            window.initRadio();
         }
 
         updateNavLinks(url);

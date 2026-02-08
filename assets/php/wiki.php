@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'category' => $categories, 
         'subcategory' => isset($input['subcategory']) ? $input['subcategory'] : [], // Subcategories array
         'user_category' => strip_tags(trim($input['user_category'] ?? '')), // Custom Category
-        'source' => strip_tags(trim($input['source'] ?? '')),
+        'source' => isset($input['source']) ? $input['source'] : [], // Now storing as array of objects {name, url}
         'original_id' => isset($input['id']) ? $input['id'] : null,
         'verification_request' => isset($input['verification_request']) ? true : false
     ];
@@ -103,7 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
     $host = $_SERVER['HTTP_HOST'];
-    $baseUrl = "$protocol://$host/assets/php/approve.php";
+    $path = dirname($_SERVER['PHP_SELF']); // e.g. /katosalsahub.pl/assets/php
+    $baseUrl = "$protocol://$host$path/approve.php";
     
     $approveLink = "$baseUrl?token=" . $entry['token'] . "&action=approve";
     $rejectLink = "$baseUrl?token=" . $entry['token'] . "&action=reject";
@@ -121,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p><strong>Kategorie:</strong> {$categoriesStr}</p>
       <p><strong>Podkategorie:</strong> {$subcategoriesStr}</p>
       " . ($entry['user_category'] ? "<p><strong>Proponowana Kategoria:</strong> {$entry['user_category']}</p>" : "") . "
-      <p><strong>Źródło:</strong> {$entry['source']}</p>
+      <p><strong>Źródła:</strong> " . (is_array($entry['source']) ? implode(', ', array_map(function($s){ return ($s['name']??'') . ' ' . ($s['url']??''); }, $entry['source'])) : $entry['source']) . "</p>
       <p><strong>Definicja:</strong><br>{$entry['definition']}</p>
       <hr>
       <p>

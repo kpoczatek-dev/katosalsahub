@@ -168,12 +168,16 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+/* Main Content Area */
 .wiki-main-container {
     display: flex;
     max-width: 1400px;
-    margin: 40px auto;
-    padding: 0 20px;
-    gap: 40px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 30px;
+    position: relative;
+    /* Prevent layout shift */
+    min-height: 80vh; 
 }
 
 /* Sidebar */
@@ -393,13 +397,51 @@ body {
 }
 
 /* Modal Form Improvements v8 */
-.auth-group {
+.auth-group,
+.form-row {
     display: flex;
     gap: 15px;
 }
 
-.auth-group > div {
+.auth-group > div,
+.form-row > .form-group {
     flex: 1;
+}
+
+/* Multi-Source Styles */
+.source-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.btn-remove-source {
+    background: transparent;
+    border: none;
+    color: var(--cuban-red);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 5px;
+}
+
+.btn-add-inline {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--cuban-green);
+    color: var(--cuban-green);
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+}
+
+.btn-add-inline:hover {
+    background: var(--cuban-green);
+    color: black;
 }
 
 /* Custom Select Styles */
