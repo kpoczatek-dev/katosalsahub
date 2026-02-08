@@ -274,20 +274,17 @@ async function processModeration(id, action) {
         const result = await response.json();
 
         if (result.success) {
-            // Optimistic UI: Remove locally to preserve scroll/focus
-            const card = document.getElementById('card-' + id);
-            if (card) {
-                card.remove();
-            }
-            
-            // Update Local State
-            if (AppState.pending) {
-                AppState.pending = AppState.pending.filter(t => t.id !== id);
-                
-                // If list becomes empty, show message
-                if (AppState.pending.length === 0) {
-                    const grid = document.getElementById('wikiGrid');
-                    if(grid) grid.innerHTML = '<div class="no-results">Brak oczekujących haseł.</div>';
+            // 1. Usuń z DOM
+            document.getElementById('card-' + id)?.remove();
+
+            // 2. Usuń z AppState (KLUCZOWE)
+            AppState.pending = AppState.pending.filter(t => t.id !== id);
+
+            // 3. Jeśli lista pusta – pokaż komunikat
+            if (AppState.pending.length === 0) {
+                const grid = document.getElementById('wikiGrid');
+                if (grid) {
+                    grid.innerHTML = '<div class="no-results">Brak oczekujących zgłoszeń.</div>';
                 }
             }
         } else {
