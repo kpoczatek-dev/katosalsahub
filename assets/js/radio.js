@@ -15,34 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize
     function init() {
-        // Re-select elements (SPA support)
-        const headerPlayBtn = document.getElementById('header-radio-play');
-        const sectionPlayBtn = document.getElementById('radio-play');
-        const vinyl = document.querySelector('.vinyl-disc');
-        const soundWaves = document.querySelectorAll('.sound-wave span');
-
-        if (headerPlayBtn) {
-            headerPlayBtn.removeEventListener('click', toggleRadio);
-            headerPlayBtn.addEventListener('click', toggleRadio);
-        }
-        if (sectionPlayBtn) {
-            sectionPlayBtn.removeEventListener('click', toggleRadio);
-            sectionPlayBtn.addEventListener('click', toggleRadio);
-        }
-        
-        // Update UI immediately to reflect current state
-        updateUI(headerPlayBtn, sectionPlayBtn, vinyl, soundWaves);
-        
-        // Ensure Audio Events start only once? No, they depend on global audio.
-        // But we need to update UI when audio state changes.
-        // We can attach these once globally? 
-        // Or re-attach? 
-        // If we re-run init, we might stack listeners on 'radioAudio' object which is persistent?
-        // YES. 'radioAudio' is in closure.
-        // We should NOT re-add listeners to radioAudio every time init is called.
-        // Move audio listeners OUT of init or check flag.
+        // Update UI immediately (find elements just for UI update)
+        updateGlobalUI();
     }
     
+    // Global Click Listener (Event Delegation) - Handles dynamic elements
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('#header-radio-play, #radio-play');
+        if (btn) {
+            e.preventDefault();
+            toggleRadio();
+        }
+    });
+
     // One-time Audio Setup
     radioAudio.addEventListener('playing', () => {
         isLoading = false;
@@ -65,8 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
         isLoading = false;
         isPlaying = false;
         updateGlobalUI();
-        alert("Nie udało się połączyć z radiem. Spróbuj ponownie później.");
+        // Don't alert on simple stream errors to annoying user? Or use toast?
+        // alert("Nie udało się połączyć z radiem.");
     });
+
 
     function updateGlobalUI() {
         const headerPlayBtn = document.getElementById('header-radio-play');
