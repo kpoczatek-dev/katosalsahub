@@ -308,6 +308,13 @@ async function fetchTerms() {
 
 // Fetch Pending Terms
 async function fetchPendingTerms() {
+    // Simple Security
+    const pass = prompt("Podaj hasło administratora:");
+    if(pass !== 'katoAdmin2024') { // Hardcoded for simplicity as requested
+        alert("Błędne hasło.");
+        return;
+    }
+
     if(loading) loading.style.display = 'flex';
     grid.innerHTML = '';
     
