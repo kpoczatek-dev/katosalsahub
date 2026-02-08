@@ -4,7 +4,7 @@
  * Handles approval/rejection and increments verification_count.
  */
 
-header('Content-Type: text/html; charset=utf-8');
+header('Content-Type: application/json; charset=utf-8');
 
 $salsopediaFile = '../data/salsopedia.json';
 $pendingFile = '../data/pending_edits.json';
@@ -19,10 +19,18 @@ function saveJSON($file, $data) {
     return file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
+// Log function for debugging
+function debug_log($msg) {
+    file_put_contents('approve_debug.log', date('Y-m-d H:i:s') . ": " . $msg . "\n", FILE_APPEND);
+}
+
 $token = $_GET['token'] ?? null;
 $action = $_GET['action'] ?? null;
 
-if (!$token || !$action) die("Błąd linku.");
+if (!$token || !$action) {
+    echo json_encode(['success' => false, 'message' => 'Brak tokena lub akcji.']);
+    exit;
+}
 
 $pending = readJSON($pendingFile);
 $entryIndex = -1;
@@ -37,71 +45,63 @@ foreach ($pending as $index => $item) {
 }
 
 if ($entryIndex === -1) {
-    // Check if maybe it was already processed (optional handling)
-    die("Link nieaktualny lub zgłoszenie już przetworzone.");
+    echo json_encode(['success' => false, 'message' => 'Zgłoszenie nie istnieje lub zostało już przetworzone.']);
+    exit;
 }
 
 if ($action === 'approve') {
     $salsopedia = readJSON($salsopediaFile);
 
-    // Ensure category is array
+    // Create Final Entry
     $entryCats = is_array($entry['category']) ? $entry['category'] : [$entry['category']];
+    
+    // Check if verification or new
+    $originalId = $entry['original_id'] ?? null;
+    $updated = false;
 
-    // Check if it's a verification request or full edit
-    if (!empty($entry['verification_request']) && !empty($entry['original_id'])) {
-        // Find original entry
-        $found = false;
+    if ($originalId) {
+        // Edit or Verify
         foreach ($salsopedia as $idx => $existing) {
-            if ($existing['id'] === $entry['original_id']) {
-                // Increment Verification Count
-                $currentCount = isset($existing['verification_count']) ? (int)$existing['verification_count'] : 0;
-                $salsopedia[$idx]['verification_count'] = $currentCount + 1;
-                
-                // If count > 0, status becomes verified
-                $salsopedia[$idx]['status'] = 'verified';
-                
-                // Update simple fields (author of verification is just partial)
-                // We might want to keep the original author or append verifiers names
-                // For simplicity: We just increment count and set status.
-                
-                $found = true;
-                break;
-            }
+             if ($existing['id'] === $originalId) {
+                 // Check verification request
+                 if (!empty($entry['verification_request'])) {
+                     $salsopedia[$idx]['verification_count'] = ($existing['verification_count'] ?? 0) + 1;
+                     $salsopedia[$idx]['status'] = 'verified';
+                 } else {
+                     // Full Update
+                     $salsopedia[$idx]['term'] = $entry['term'];
+                     $salsopedia[$idx]['definition'] = $entry['definition'];
+                     $salsopedia[$idx]['category'] = $entryCats;
+                     $salsopedia[$idx]['source'] = $entry['source'];
+                     $salsopedia[$idx]['verification_count'] = ($existing['verification_count'] ?? 0) + 1;
+                     $salsopedia[$idx]['status'] = 'verified';
+                     $salsopedia[$idx]['last_updated'] = date('Y-m-d');
+                 }
+                 $updated = true;
+                 break;
+             }
         }
-    } else {
-        // It's a new term or full edit (content change)
-        // If it's a content change, we accept the new content.
-        // If it's new, we add it.
-
+    }
+    
+    if (!$updated) {
+        // New Entry
         $finalEntry = [
-            'id' => !empty($entry['original_id']) ? $entry['original_id'] : uniqid('term_'),
+            'id' => uniqid('term_'),
             'term' => $entry['term'],
             'definition' => $entry['definition'],
             'author' => $entry['author'],
             'category' => $entryCats, 
-            'source' => $entry['source'],
-            // New entry is verified by admin instantly? Or starts at 1?
+            'source' => $entry['source'] ?? [],
             'status' => 'verified', 
             'verification_count' => 1,
             'last_updated' => date('Y-m-d')
         ];
-
-        $updated = false;
-        foreach ($salsopedia as $idx => $existing) {
-            if ($existing['id'] === $finalEntry['id']) {
-                $salsopedia[$idx] = $finalEntry;
-                $updated = true;
-                break;
-            }
-        }
+        $salsopedia[] = $finalEntry;
         
-        if (!$updated) {
-            $salsopedia[] = $finalEntry;
-            // A-Z Sort
-            usort($salsopedia, function($a, $b) {
-                return strcasecmp($a['term'], $b['term']);
-            });
-        }
+        // Sort A-Z
+        usort($salsopedia, function($a, $b) {
+            return strcasecmp($a['term'], $b['term']);
+        });
     }
 
     saveJSON($salsopediaFile, $salsopedia);
@@ -110,20 +110,14 @@ if ($action === 'approve') {
     array_splice($pending, $entryIndex, 1);
     saveJSON($pendingFile, $pending);
 
-    // Log Success
-    file_put_contents('approve_debug.log', date('Y-m-d H:i:s') . " - Action: $action - Token: $token - SUCCESS\n", FILE_APPEND);
-    echo json_encode(['status' => 'success', 'message' => 'Zatwierdzono! ✅ Baza zaktualizowana.']);
+    echo json_encode(['success' => true, 'message' => 'Zatwierdzono pomyślnie!']);
 
 } elseif ($action === 'reject') {
+    // Just remove from pending
     array_splice($pending, $entryIndex, 1);
-    
-    if (saveJSON($pendingFile, $pending)) {
-        file_put_contents('approve_debug.log', date('Y-m-d H:i:s') . " - Action: $action - Token: $token - SUCCESS\n", FILE_APPEND);
-        echo json_encode(['status' => 'success', 'message' => 'Odrzucono.']);
-    } else {
-        file_put_contents('approve_debug.log', date('Y-m-d H:i:s') . " - Action: $action - Token: $token - ERROR\n", FILE_APPEND);
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'message' => 'Błąd zapisu.']);
-    }
+    saveJSON($pendingFile, $pending);
+    echo json_encode(['success' => true, 'message' => 'Odrzucono zgłoszenie.']);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Nieznana akcja.']);
 }
 ?>
