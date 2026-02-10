@@ -5,17 +5,19 @@
 
 /* --- Variables --- */
 :root {
-  --bg: #0a0a0a;
-  --card: #1a1a1a;
+  /* Midnight Lounge Theme (Lighter & Warmer) */
+  --bg: #13141f;       /* Deep warm navy/charcoal instead of pitch black */
+  --card: #1e202f;     /* Slightly lighter tint for cards */
 
-  --fg: #ffffff;
-  --fg-muted: #a0a0a0;
+  --fg: #e2e8f0;       /* Soft slate white */
+  --fg-muted: #94a3b8; /* Muted slate */
 
-  --red: #ff4757;
-  --orange: #ffa502;
-  --yellow: #ffd32a;
-  --green: #10b981;
-  --blue: #3742fa;
+  /* Warmer Accents */
+  --red: #fb7185;      /* Rose-400 (softer than #ff4757) */
+  --orange: #fbbf24;   /* Amber-400 (warmer than #ffa502) */
+  --yellow: #fcd34d;   /* Amber-300 (sunnier than #ffd32a) */
+  --green: #34d399;    /* Emerald-400 */
+  --blue: #60a5fa;     /* Blue-400 */
 }
 
 /* --- Reset --- */
@@ -35,13 +37,13 @@ body {
   background:
     radial-gradient(
       circle at top,
-      rgba(255, 71, 87, 0.08),
-      transparent 40%
+      rgba(251, 113, 133, 0.05), /* Rose tint */
+      transparent 50%
     ),
     radial-gradient(
       circle at bottom,
-      rgba(255, 165, 2, 0.06),
-      transparent 50%
+      rgba(251, 191, 36, 0.04), /* Amber tint */
+      transparent 60%
     ),
     var(--bg);
   color: var(--fg);
