@@ -5,13 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polityka Prywatności - Kato Salsa Hub</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/mobile.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;800&display=swap"
-        rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/sections.css">
     <style>
         .privacy-content {
             padding: 150px 0 100px;
@@ -69,10 +66,29 @@
     </div>
 
     <nav class="nav-bar">
-        <a href="index.html" class="nav-logo">
-            <span class="logo-text">KATO SALSA HUB</span>
-            <span class="logo-emoji">🔥</span>
-        </a>
+        <div class="nav-brand-group">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-text">KATO SALSA HUB</span>
+                <span class="logo-emoji">🔥</span>
+            </a>
+            <button id="header-radio-play" class="header-radio-btn" aria-label="Włącz radio">
+                <i class="fas fa-play"></i>
+            </button>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#hero">Start</a>
+            <a href="index.html#onas">O nas</a>
+            <a href="index.html#style">Style</a>
+            <a href="salsopedia.html" data-page="wiki">Salsopedia</a>
+            <a href="index.html#radio">Radio</a>
+            <a href="index.html#mapa">Lokacja</a>
+            <a href="index.html#kontakt" class="cta-link">Kontakt</a>
+        </div>
+        <div class="burger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </nav>
 
     <div class="container">
@@ -113,8 +129,26 @@
     </div>
 
     <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>KATO SALSA HUB 🔥</h3>
+                <p>Kubańska energia w sercu Śląska</p>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#hero">Start</a>
+                <a href="index.html#onas">O nas</a>
+                <a href="index.html#style">Style</a>
+                <a href="index.html#kontakt">Kontakt</a>
+                <a href="privacy.html">Polityka Prywatności</a>
+                <a href="https://dancepuls.katosalsahub.pl/" target="_blank">DancePuls Generator</a>
+            </div>
+        </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 Kato Salsa Hub.</p>
+            <p>&copy; <span id="rok"></span> Kato Salsa Hub. Stworzone przez <a href="https://twojastronawww.pl"
+                    target="_blank">TwojaStronaWWW</a></p>
+            <p style="margin-top:10px;"><a href="javascript:void(0);" id="showPendingBtn"
+                    onclick="if(window.fetchPendingTerms) fetchPendingTerms(); else if(window.initWiki) window.initWiki();"
+                    style="color:#555; text-decoration:none; font-size:0.8rem;">[Moderacja]</a></p>
         </div>
     </footer>
 
@@ -131,6 +165,21 @@
     </div>
 
     <script src="assets/js/cookies.js"></script>
+    <script>
+        // Rok w footerze
+        document.getElementById("rok").textContent = new Date().getFullYear();
+
+        // Burger menu integration
+        const burger = document.querySelector('.burger-menu');
+        const navLinks = document.querySelector('.nav-links');
+        if (burger && navLinks) {
+            burger.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                burger.classList.toggle('active');
+            });
+        }
+    </script>
+    <script src="assets/js/radio.js"></script>
 </body>
 
 </html>

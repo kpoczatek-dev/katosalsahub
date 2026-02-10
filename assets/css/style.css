@@ -36,14 +36,19 @@ body {
   font-family: 'Montserrat', sans-serif;
   background:
     radial-gradient(
-      circle at top,
-      rgba(251, 113, 133, 0.05), /* Rose tint */
-      transparent 50%
+      circle at 25% 45%,
+      rgba(251, 191, 36, 0.14), /* złoto */
+      transparent 48%
     ),
     radial-gradient(
-      circle at bottom,
-      rgba(251, 191, 36, 0.04), /* Amber tint */
-      transparent 60%
+      circle at 75% 65%,
+      rgba(251, 113, 133, 0.10), /* ciepła czerwień */
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(30, 32, 47, 0.85),
+      rgba(19, 20, 31, 1)
     ),
     var(--bg);
   color: var(--fg);
@@ -118,6 +123,14 @@ button {
   color: var(--fg-muted);
   max-width: 600px;
   margin: 0 auto;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--red), var(--orange), var(--yellow));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block; /* Fix for some browsers */
 }
 
 /* --- Reduced Motion --- */
