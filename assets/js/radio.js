@@ -98,7 +98,8 @@ function initRadio() {
     function updateUI(headerBtn, sectionBtn, vinyl, waves) {
         // defined states
         const state = isLoading ? 'loading' : (isPlaying ? 'playing' : 'stopped');
-        
+        const sectionRadio = document.querySelector('.section-radio');
+
         // 1. Update Section Button
         if (sectionBtn) {
             if (state === 'loading') {
@@ -144,17 +145,13 @@ function initRadio() {
             headerBtn.title = state === 'playing' ? "Zatrzymaj radio" : "Włącz radio";
         }
 
-        // 3. Update Animations
-        const animationState = isPlaying ? 'running' : 'paused';
-        
-        if (vinyl) {
-            vinyl.style.animationPlayState = animationState;
-        }
-        
-        if (waves) {
-            waves.forEach(wave => {
-                wave.style.animationPlayState = animationState;
-            });
+        // 3. Update Animations via CSS Context
+        if (sectionRadio) {
+            if (state === 'playing') {
+                sectionRadio.classList.add('playing');
+            } else {
+                sectionRadio.classList.remove('playing');
+            }
         }
     }
 

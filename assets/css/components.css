@@ -1,0 +1,298 @@
+/* =====================================================
+   COMPONENTS.CSS
+   Buttons, Cards, Inputs, Modals, Badges
+   ===================================================== */
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 14px 26px;
+  border-radius: 999px;
+
+  font-weight: 600;
+  font-family: inherit;
+  
+  /* Default/fallback */
+  background: linear-gradient(135deg, var(--red), var(--orange));
+  color: #000;
+  text-align: center;
+  border: none; /* Reset standard border */
+
+  transition: 
+    transform .2s ease,
+    box-shadow .2s ease,
+    background .2s ease,
+    opacity .2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 71, 87, 0.35);
+}
+
+/* Accessibility: Focus Ring */
+button:focus-visible,
+.btn:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 4px;
+}
+
+/* Variants */
+.btn-primary {
+  background: linear-gradient(135deg, var(--red), var(--orange));
+  color: #000;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--orange);
+  box-shadow: inset 0 0 0 1px rgba(255,165,2,.5); /* box-shadow instead of outline */
+}
+
+.btn-secondary:hover {
+  background: rgba(255,165,2,.1);
+  box-shadow: inset 0 0 0 1px var(--orange);
+}
+
+.btn-radio {
+  background: linear-gradient(135deg, var(--yellow), var(--orange));
+  color: #000;
+}
+
+/* Specific Buttons (can inherit or override) */
+.btn-submit,
+.btn-verify,
+.btn-add-inline {
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, var(--red), var(--orange));
+    color: #fff;
+}
+
+.btn-verify {
+  border: 1px solid var(--yellow);
+  background: rgba(255,211,42,.15);
+  color: var(--yellow);
+}
+
+.btn-verify:hover {
+  background: var(--yellow);
+  color: #000;
+}
+
+/* FAB */
+.fab-add {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--red), var(--orange));
+  color: white;
+  border: none;
+  font-size: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+/* --- Cards --- */
+.wiki-card,
+.onas-card, 
+.style-card {
+    border: none;
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.04),
+      rgba(255,255,255,0.01)
+    );
+    border-radius: 24px;
+    padding: 24px;
+    position: relative;
+    /* Base shadow - subtle border effect */
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.06),
+        0 10px 30px rgba(0,0,0,.4);
+    
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+/* Hover Effects (Shared) */
+.wiki-card:hover,
+.style-card:hover,
+.onas-card:hover {
+  transform: translateY(-6px);
+  /* Energetic glow using shadow instead of outline */
+  box-shadow:
+    0 0 0 1px rgba(255,165,2,.5),
+    0 20px 50px rgba(255,165,2,.25);
+}
+
+/* Style Card specific internal glow */
+.style-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 165, 2, 0.15),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+
+.style-card:hover::after {
+  opacity: 1;
+}
+
+/* Badge System */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cat-badge {
+  font-size: .7rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+}
+
+.cat-badge.main-cat {
+  background: rgba(16,185,129,.25);
+  color: #8ff0c5;
+}
+
+.cat-badge.sub-cat {
+  background: rgba(55,66,250,.25);
+  color: #aab4ff;
+}
+
+/* --- Inputs --- */
+.search-container {
+  margin-top: 1rem;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 20px 14px 46px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  color: var(--fg);
+  font-family: inherit;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--orange);
+    background: rgba(255,255,255,.15);
+}
+
+.search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: .6;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    max-width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    color: var(--fg);
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--red);
+}
+
+/* --- Modals --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 2000;
+  transition: .3s;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.wiki-modal {
+  background: var(--card);
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.modal-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: var(--fg-muted);
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .wiki-modal {
+    max-width: 600px;
+    height: auto;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+  }
+}
+
+/* --- Misc --- */
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  border: 1px dashed rgba(255,255,255,.2);
+  border-radius: 16px;
+}
