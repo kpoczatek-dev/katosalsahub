@@ -36,34 +36,25 @@
   display: none;
 }
 
-/* Navbar Links Interaction */
-.nav-links a {
-  position: relative;
-  padding: 6px 0;
-  opacity: 0.85;
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-}
-
-.nav-links a:hover {
-  opacity: 1;
-  transform: translateY(-2px);
-}
-
-.nav-links a::after {
-  content: "";
+/* Mobile Nav State */
+.nav-links.active {
+  display: flex;
+  flex-direction: column;
   position: absolute;
+  top: 80px;
   left: 0;
-  bottom: -4px;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--red), var(--orange));
-  transition: width .25s ease;
+  right: 0;
+  background: rgba(10,10,10,.95);
+  backdrop-filter: blur(16px);
+  padding: 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  gap: 20px;
+  animation: slideDown .3s ease-out;
 }
 
-.nav-links a:hover::after {
-  width: 100%;
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .burger-menu {
@@ -213,6 +204,14 @@ main {
     position: relative; /* Context for overlays */
 }
 
+.section-subtitle {
+  text-align: center;
+  max-width: 600px;
+  margin: -40px auto 40px; /* Pull closer to title, push grid away */
+  color: var(--fg-muted);
+  font-size: 1.1rem;
+}
+
 /* Subtle Gradient Overlays for Depth */
 .section-onas::before,
 .section-style::before,
@@ -239,7 +238,13 @@ main {
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
     .style-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        row-gap: 32px;
+        column-gap: 24px;
+    }
+    
+    .style-card.featured {
+        grid-column: span 2;
     }
 }
 
