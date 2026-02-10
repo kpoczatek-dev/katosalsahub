@@ -100,6 +100,9 @@ function initRadio() {
         const state = isLoading ? 'loading' : (isPlaying ? 'playing' : 'stopped');
         const sectionRadio = document.querySelector('.section-radio');
 
+        // 0. Global State (Single Source of Truth)
+        document.body.classList.toggle('radio-playing', isPlaying);
+
         // 1. Update Section Button
         if (sectionBtn) {
             if (state === 'loading') {
@@ -146,6 +149,8 @@ function initRadio() {
         }
 
         // 3. Update Animations via CSS Context
+        // NOW HANDLED BY global .radio-playing class on body
+        // Legacy support if needed, but cleaner to remove if CSS is updated
         if (sectionRadio) {
             if (state === 'playing') {
                 sectionRadio.classList.add('playing');

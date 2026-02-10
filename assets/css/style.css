@@ -32,7 +32,18 @@ html {
 body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
-  background: var(--bg);
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(255, 71, 87, 0.08),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at bottom,
+      rgba(255, 165, 2, 0.06),
+      transparent 50%
+    ),
+    var(--bg);
   color: var(--fg);
   line-height: 1.6;
 }
